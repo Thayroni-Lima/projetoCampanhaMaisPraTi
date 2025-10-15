@@ -1,0 +1,43 @@
+version: '3.8'
+
+services:
+  campanha-api:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: campanha-api
+    restart: on-failure
+    ports:
+      - "8080:8080"
+    environment:
+      - SPRING_PROFILES_ACTIVE=dev
+      - SPRING_DATASOURCE_URL=jdbc:mysql://campanha-db:3306/campanha?useSSL=false&allowPublicKeyRetrieval=true&serverTimezone=UTC
+      - SPRING_DATASOURCE_USERNAME=root
+      - SPRING_DATASOURCE_PASSWORD=senhasegura
+      - APP_JWT_SECRET=dev-secret-change
+      - APP_JWT_EXPIRATION=3600000
+    networks:
+      - campanha-net
+    depends_on:
+      - campanha-db
+
+  campanha-db:
+    image: mysql:8.4
+    container_name: campanha-db
+    restart: always
+    environment:
+      MYSQL_DATABASE: campanha
+      MYSQL_ROOT_PASSWORD: senhasegura
+    ports:
+      - "3306:3306"
+    volumes:
+      - mysql-data:/var/lib/mysql
+    networks:
+      - campanha-net
+
+networks:
+  campanha-net:
+    driver: bridge
+
+volumes:
+  mysql-data:
