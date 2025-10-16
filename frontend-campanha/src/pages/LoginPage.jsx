@@ -1,8 +1,10 @@
 import { useState } from "react";
+import { Navigate, useNavigate } from "react-router-dom";
 import { useAuth } from "../contexts/AuthContext";
 
 export default function LoginPage() {
   const { login } = useAuth();
+  const navigate = useNavigate();
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
 
@@ -10,16 +12,16 @@ export default function LoginPage() {
     e.preventDefault();
     try {
       await login({ email, password });
-      alert("Login realizado!");
+      navigate("/dashboard"); 
     } catch (error) {
       alert(error.message || "Erro ao fazer login");
     }
   }
 
   return (
-    <div className="h-screen w-screen flex items-center justify-center bg-amber-100">
+    <div className="h-screen w-screen flex items-center justify-center">
       <form onSubmit={handleLogin} className="bg-white p-6 rounded-lg shadow-md">
-        <h2 className="text-2xl font-bold mb-4 text-amber-300">Login</h2>
+        <h2 className="text-2xl font-bold mb-4 text-blue-900">Login</h2>
         <input
           type="email"
           placeholder="Email"
