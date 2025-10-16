@@ -1,9 +1,10 @@
 import { createContext, useContext, useState } from "react";
-import { login as loginService, logout as logoutService, saveToken, removeToken, getToken } from "../services/authService";
+import { login as loginService, saveToken, removeToken, getToken } from "../services/authService";
 
 const AuthContext = createContext();
 
 // Hook pra facilitar o uso do contexto
+// eslint-disable-next-line react-refresh/only-export-components
 export function useAuth() {
   return useContext(AuthContext);
 }
@@ -14,7 +15,7 @@ export function AuthProvider({ children }) {
   const [token, setToken] = useState(getToken());
   const [loading, setLoading] = useState(false);
 
-  // ⚙️ Função de login
+  // Função de login
   async function login(credentials) {
     setLoading(true);
     try {
@@ -22,14 +23,12 @@ export function AuthProvider({ children }) {
       setUser(data.user);
       setToken(data.token);
       saveToken(data.token);
-    } catch (error) {
-      throw error;
     } finally {
       setLoading(false);
     }
   }
 
-  // ⚙️ Função de logout
+  // Função de logout
   function logout() {
     setUser(null);
     setToken(null);
