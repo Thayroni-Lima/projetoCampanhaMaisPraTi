@@ -9,6 +9,14 @@ export function useAuth() {
   return useContext(AuthContext);
 }
 
+export default function Loader() {
+  return (
+    <div className="h-screen flex items-center justify-center">
+      <span className="text-xl animate-pulse text-gray-600">Carregando...</span>
+    </div>
+  );
+}
+
 // Provider que vai envolver todo o app
 export function AuthProvider({ children }) {
   const [user, setUser] = useState(null);
