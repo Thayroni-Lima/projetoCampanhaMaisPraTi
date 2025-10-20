@@ -2,6 +2,7 @@ import { BrowserRouter as Router, Routes, Route, BrowserRouter, Navigate } from 
 import PrivateRoute from "../pages/PrivateRoute";
 import LoginPage from "../pages/LoginPage";
 import DashboardPage from "../pages/DashboardPage";
+import RegisterPage from "../pages/RegisterPage";
 
 export default function AppRoutes() {
   return (
@@ -10,6 +11,7 @@ export default function AppRoutes() {
       <Routes>
         {/* Rota pública */}
         <Route path="/login" element={<LoginPage />} />
+        <Route path="/register" element={<RegisterPage />} />
 
         {/* Rota privada */}
         <Route

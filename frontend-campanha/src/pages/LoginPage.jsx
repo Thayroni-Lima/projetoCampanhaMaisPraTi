@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { Navigate, useNavigate } from "react-router-dom";
+import { useNavigate, Link } from "react-router-dom";
 import { useAuth } from "../contexts/AuthContext";
 
 export default function LoginPage() {
@@ -20,7 +20,7 @@ export default function LoginPage() {
 
   return (
     <div className="h-screen w-screen flex items-center justify-center">
-      <form onSubmit={handleLogin} className="bg-white p-6 rounded-lg shadow-md">
+      <form onSubmit={handleLogin} className="bg-white shadow-lg rounded-xl p-8 w-96">
         <h2 className="text-2xl font-bold mb-4 text-blue-900">Login</h2>
         <input
           type="email"
@@ -36,9 +36,18 @@ export default function LoginPage() {
           value={password}
           onChange={(e) => setPassword(e.target.value)}
         />
+
         <button className="bg-blue-500 text-white w-full p-2 rounded hover:bg-blue-600">
           Entrar
         </button>
+
+        <p className="text-sm text-center mt-4 text-gray-600">
+          Não possui uma conta?{" "}
+          <Link to="/register">
+            Registrar
+          </Link>
+        </p>
+
       </form>
     </div>
   );
