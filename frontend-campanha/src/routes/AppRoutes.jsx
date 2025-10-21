@@ -1,16 +1,16 @@
-import { BrowserRouter as Router, Routes, Route, BrowserRouter, Navigate } from "react-router-dom";
-  import PrivateRoute from "../pages/PrivateRoute";
-import LoginPage from "../pages/LoginPage";
-import RegisterPage from "../pages/RegisterPage";
+import { BrowserRouter, Navigate, Route, Routes } from "react-router-dom";
+import PrivateRoute from "./PrivateRoute";
 
-import DashboardPage from "../pages/DashboardPage";
-import CampaignListPage from "../pages/CampaignListPage";
-import CampanhaFormPage from "../pages/CampaignFormPage";
-import CampanhaDetailsPage from "../pages/CampaignDetailsPage"
+import LoginPage from "../pages/public/LoginPage";
+import RegisterPage from "../pages/public/RegisterPage";
+
+import CampanhaDetailsPage from "../pages/private/CampaignDetailsPage";
+import CampanhaFormPage from "../pages/private/CampaignFormPage";
+import CampaignListPage from "../pages/private/CampaignListPage";
+import DashboardPage from "../pages/private/DashboardPage";
 
 export default function AppRoutes() {
   return (
-
     <BrowserRouter>
       <Routes>
         {/* Rota pública */}
@@ -54,13 +54,8 @@ export default function AppRoutes() {
           }
         />
 
-        <Route
-          path="*" element={<Navigate to={"/login"} replace/>}
-        />
-
+        <Route path="*" element={<Navigate to={"/login"} replace />} />
       </Routes>
     </BrowserRouter>
-
-
   );
 }

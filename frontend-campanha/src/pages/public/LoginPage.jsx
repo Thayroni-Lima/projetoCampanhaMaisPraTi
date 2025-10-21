@@ -1,6 +1,6 @@
 import { useState } from "react";
-import { useNavigate, Link } from "react-router-dom";
-import { useAuth } from "../contexts/AuthContext";
+import { Link, useNavigate } from "react-router-dom";
+import { useAuth } from "../../contexts/AuthContext";
 
 export default function LoginPage() {
   const { login } = useAuth();
@@ -12,7 +12,7 @@ export default function LoginPage() {
     e.preventDefault();
     try {
       await login({ email, password });
-      navigate("/dashboard"); 
+      navigate("/dashboard");
     } catch (error) {
       alert(error.message || "Erro ao fazer login");
     }
@@ -20,8 +20,13 @@ export default function LoginPage() {
 
   return (
     <div className="h-screen w-screen flex items-center justify-center">
-      <form onSubmit={handleLogin} className="bg-white shadow-lg rounded-xl p-8 w-96">
-        <h2 className="text-2xl font-bold mb-4 text-blue-900 text-center">Login</h2>
+      <form
+        onSubmit={handleLogin}
+        className="bg-white shadow-lg rounded-xl p-8 w-96"
+      >
+        <h2 className="text-2xl font-bold mb-4 text-blue-900 text-center">
+          Login
+        </h2>
         <input
           type="email"
           placeholder="Email"
@@ -42,12 +47,8 @@ export default function LoginPage() {
         </button>
 
         <p className="text-sm text-center mt-4 text-gray-600">
-          Não possui uma conta?{" "}
-          <Link to="/register">
-            Registrar
-          </Link>
+          Não possui uma conta? <Link to="/register">Registrar</Link>
         </p>
-
       </form>
     </div>
   );

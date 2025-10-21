@@ -1,6 +1,6 @@
 import { useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
-import { register as registerService } from "../services/authService";
+import { register as registerService } from "../../services/authService";
 
 export default function RegisterPage() {
   const navigate = useNavigate();
@@ -12,7 +12,7 @@ export default function RegisterPage() {
     avatarUrl: "",
     city: "",
     state: "",
-    userTypeLabel: ""
+    userTypeLabel: "",
   });
 
   const [error, setError] = useState("");
@@ -21,7 +21,7 @@ export default function RegisterPage() {
   const handleChange = (e) => {
     setFormData({
       ...formData,
-      [e.target.name]: e.target.value
+      [e.target.name]: e.target.value,
     });
   };
 
@@ -113,7 +113,9 @@ export default function RegisterPage() {
         </div>
 
         {error && <p className="text-red-500 text-center mt-3">{error}</p>}
-        {success && <p className="text-green-500 text-center mt-3">{success}</p>}
+        {success && (
+          <p className="text-green-500 text-center mt-3">{success}</p>
+        )}
 
         <button
           type="submit"
