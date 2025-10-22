@@ -1,10 +1,13 @@
 import { BrowserRouter, Navigate, Route, Routes } from "react-router-dom";
 import PrivateRoute from "./PrivateRoute";
 
+import MainLayout from "../layouts/MainLayout";
+
 import LoginPage from "../pages/public/LoginPage";
 import RegisterPage from "../pages/public/RegisterPage";
 
 import CampanhaDetailsPage from "../pages/private/CampaignDetailsPage";
+import CampaignEditPage from "../pages/private/CampaignEditPage";
 import CampanhaFormPage from "../pages/private/CampaignFormPage";
 import CampaignListPage from "../pages/private/CampaignListPage";
 import DashboardPage from "../pages/private/DashboardPage";
@@ -13,49 +16,29 @@ export default function AppRoutes() {
   return (
     <BrowserRouter>
       <Routes>
-        {/* Rota pública */}
+        {/* Rotas públicas - SEM MainLayout */}
         <Route path="/login" element={<LoginPage />} />
         <Route path="/register" element={<RegisterPage />} />
 
-        {/* Rota privada */}
+        {/* Rotas privadas - COM MainLayout */}
         <Route
-          path="/dashboard"
           element={
             <PrivateRoute>
-              <DashboardPage />
+              <MainLayout />
             </PrivateRoute>
           }
-        />
+        >
+          <Route path="/dashboard" element={<DashboardPage />} />
+          <Route path="/campanhas" element={<CampaignListPage />} />
+          
+          {/* IMPORTANTE: Rotas mais específicas ANTES das genéricas */}
+          <Route path="/campanhas/nova" element={<CampanhaFormPage />} />
+          <Route path="/campanhas/editar/:id" element={<CampaignEditPage />} />
+          <Route path="/campanhas/:id" element={<CampanhaDetailsPage />} />
+        </Route>*
 
-        <Route
-          path="/campanhas"
-          element={
-            <PrivateRoute>
-              <CampaignListPage />
-            </PrivateRoute>
-          }
-        />
-
-        <Route
-          path="/campanhas/nova"
-          element={
-            <PrivateRoute>
-              <CampanhaFormPage />
-            </PrivateRoute>
-          }
-        />
-
-        <Route
-          path="/campanhas/:id"
-          element={
-            <PrivateRoute>
-              <CampanhaDetailsPage />
-            </PrivateRoute>
-          }
-        />
-
-        <Route path="*" element={<Navigate to={"/login"} replace />} />
+        <Route path="*" element={<Navigate to="/login" replace />} />
       </Routes>
     </BrowserRouter>
   );
-}
+} 

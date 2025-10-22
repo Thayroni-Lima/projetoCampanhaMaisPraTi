@@ -39,10 +39,10 @@ export default function CampaignList() {
             <div
               key={c.id}
               className="bg-white rounded-xl shadow-md overflow-hidden hover:shadow-lg transition cursor-pointer"
-              onClick={() => navigate(`/campaigns/${c.id}`)}
+              onClick={() => navigate(`/campanhas/${c.id}`)}
             >
               <img
-                src={c.imageUrl || "https://via.placeholder.com/400x200"}
+                src={c.imageUrl || "https://grs.com.br/wp-content/themes/grs19/img/img-indisponivel.jpg"}
                 alt={c.title}
                 className="w-full h-40 object-cover"
               />
