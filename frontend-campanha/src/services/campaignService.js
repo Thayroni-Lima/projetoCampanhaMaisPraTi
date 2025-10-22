@@ -7,7 +7,14 @@ export const getAllCampaigns = () => api.get("/campaigns");
 export const getCampaignById = (id) => api.get(`/campaigns/${id}`);
 
 // 🔹 Criar nova campanha
-export const createCampaign = (data) => api.post("/campaigns", data);
+export const createCampaign = async (data) => {
+  try {
+    return await api.post("/campaigns", data);
+  } catch (error) {
+    console.error("createCampaign error.response:", error.response);
+    throw error; // relança para o componente tratar
+  }
+};
 
 // 🔹 Atualizar campanha (pedenten do back) 
 // export const updateCampaign = (id, data) => api.put(`/campaigns/${id}`, data);

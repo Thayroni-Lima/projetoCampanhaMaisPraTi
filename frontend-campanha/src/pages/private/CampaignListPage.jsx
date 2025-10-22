@@ -24,7 +24,7 @@ export default function CampaignList() {
       <div className="flex justify-between items-center mb-6">
         <h1 className="text-2xl font-bold mb-4 text-blue-900 text-center">Campanhas</h1>
         <button
-          onClick={() => navigate("/campaigns/new")}
+          onClick={() => navigate("/campanhas/nova")}
           className="bg-blue-600 text-white px-4 py-2 rounded-md hover:bg-blue-700"
         >
           Nova Campanha
