@@ -6,12 +6,13 @@ import MainLayout from "../layouts/MainLayout";
 import LoginPage from "../pages/public/LoginPage";
 import RegisterPage from "../pages/public/RegisterPage";
 
+import DashboardPage from "../pages/private/DashboardPage";
+import HomePage from "../pages/private/HomePage";
+
 import CampanhaFormPage from "../pages/private//campaigns/CampaignFormPage";
 import CampanhaDetailsPage from "../pages/private/campaigns/CampaignDetailsPage";
 import CampaignEditPage from "../pages/private/campaigns/CampaignEditPage";
 import CampaignListPage from "../pages/private/campaigns/CampaignListPage";
-import DashboardPage from "../pages/private/DashboardPage";
-import HomePage from "../pages/private/HomePage";
 
 export default function AppRoutes() {
   return (

@@ -1,10 +1,12 @@
 import { useState } from "react";
 import { Menu, User } from "lucide-react";
 import SidebarComponent from "./SideBarComponent";
-import { Navigate, useNavigate } from "react-router-dom";
+import ProfilebarComponet from "./ProfileBarComponent";
+import { useNavigate } from "react-router-dom";
 
 export default function HeaderComponent() {
   const [isSidebarOpen, setIsSidebarOpen] = useState(false);
+  const [isProfilebarOpen, setIsProfilebarOpen] = useState(false);
   const navigate = useNavigate();
 
   return (
@@ -28,7 +30,9 @@ export default function HeaderComponent() {
         </button>
 
         {/* Ícone de Perfil */}
-        <button className="p-2 hover:bg-indigo-600 rounded-lg">
+        <button 
+          className="p-2 hover:bg-indigo-600 rounded-lg"
+          onClick={() => setIsProfilebarOpen(true)}>
           <User size={24} />
         </button>
       </header>
@@ -37,6 +41,11 @@ export default function HeaderComponent() {
       <SidebarComponent
         isOpen={isSidebarOpen}
         onClose={() => setIsSidebarOpen(false)}
+      />
+
+      <ProfilebarComponet
+        isOpen={isProfilebarOpen}
+        onClose={() => setIsProfilebarOpen(false)}
       />
     </>
   );
