@@ -1,6 +1,6 @@
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
-import { createCampaign } from "../../services/campaignService";
+import { createCampaign } from "../../../services/campaignService";
 
 export default function CampaignFormPage() {
   const navigate = useNavigate();

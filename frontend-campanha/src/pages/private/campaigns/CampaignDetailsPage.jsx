@@ -1,7 +1,7 @@
 // src/pages/CampaignDetailsPage.jsx
 import { useEffect, useState } from "react";
 import { useParams, useNavigate } from "react-router-dom";
-import { getCampaignById } from "../../services/campaignService";
+import { getCampaignById } from "../../../services/campaignService";
 
 export default function CampaignDetailsPage() {
   const { id } = useParams();
