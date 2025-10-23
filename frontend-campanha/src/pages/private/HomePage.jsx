@@ -67,9 +67,9 @@ export default function HomePage() {
           {user ? (
             <p>Olá, <span className="font-semibold text-blue-600">{user.name}</span> 👋</p>
           ) : (
-            <p>Faça login para começar sua jornada solidária!</p>
+            <p>Comece sua jornada solidária!</p>
           )}
-          <p className="mt-2">© {new Date().getFullYear()} Campanha Solidária. Todos os direitos reservados.</p>
+          <p className="mt-2">© {new Date().getFullYear()} Projeto Campanha. Todos os direitos reservados.</p>
         </footer>
       </div>
     </div>
