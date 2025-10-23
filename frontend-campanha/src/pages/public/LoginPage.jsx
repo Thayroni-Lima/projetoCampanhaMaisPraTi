@@ -12,7 +12,7 @@ export default function LoginPage() {
     e.preventDefault();
     try {
       await login({ email, password });
-      navigate("/dashboard");
+      navigate("/homepage");
     } catch (error) {
       alert(error.message || "Erro ao fazer login");
     }

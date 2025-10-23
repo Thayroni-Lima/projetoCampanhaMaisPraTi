@@ -6,11 +6,13 @@ import MainLayout from "../layouts/MainLayout";
 import LoginPage from "../pages/public/LoginPage";
 import RegisterPage from "../pages/public/RegisterPage";
 
+import HomePage from "../pages/private/HomePage";
+import DashboardPage from "../pages/private/DashboardPage";
 import CampanhaDetailsPage from "../pages/private/CampaignDetailsPage";
 import CampaignEditPage from "../pages/private/CampaignEditPage";
 import CampanhaFormPage from "../pages/private/CampaignFormPage";
 import CampaignListPage from "../pages/private/CampaignListPage";
-import DashboardPage from "../pages/private/DashboardPage";
+
 
 export default function AppRoutes() {
   return (
@@ -28,6 +30,7 @@ export default function AppRoutes() {
             </PrivateRoute>
           }
         >
+          <Route path="/homepage" element={<HomePage />} />
           <Route path="/dashboard" element={<DashboardPage />} />
           <Route path="/campanhas" element={<CampaignListPage />} />
           

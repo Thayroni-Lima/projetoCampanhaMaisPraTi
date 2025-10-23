@@ -9,7 +9,11 @@ export default function HeaderComponent() {
           <Menu size={24} />
         </button>
 
-        <h2 className="text-lg font-bold tracking-wide">Projeto Campanha</h2>
+        <button className="p-2 hover:bg-indigo-600 bg-indigo-600 rounded-lg">
+          <h2 className="text-lg font-bold tracking-wide ">Projeto Campanha</h2>
+        </button>
+
+        
 
         <button className="p-2 hover:bg-indigo-600 rounded-lg">
           <User size={24}/>
