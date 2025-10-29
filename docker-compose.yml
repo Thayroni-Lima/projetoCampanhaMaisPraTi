@@ -1,0 +1,64 @@
+version: '3.8'
+
+services:
+  # Banco de Dados MySQL
+  campanha-db:
+    image: mysql:8.4
+    container_name: campanha-db
+    restart: always
+    environment:
+      MYSQL_DATABASE: campanha
+      MYSQL_ROOT_PASSWORD: senhasegura
+    ports:
+      - "3306:3306"
+    volumes:
+      - mysql-data:/var/lib/mysql
+    networks:
+      - campanha-net
+    healthcheck:
+      test: ["CMD", "mysqladmin", "ping", "-h", "localhost"]
+      timeout: 20s
+      retries: 10
+
+  # Backend Spring Boot
+  campanha-api:
+    build:
+      context: ./backend-campanha
+      dockerfile: Dockerfile
+    container_name: campanha-api
+    restart: on-failure
+    ports:
+      - "8080:8080"
+    environment:
+      - SPRING_PROFILES_ACTIVE=dev
+      - SPRING_DATASOURCE_URL=jdbc:mysql://campanha-db:3306/campanha?useSSL=false&allowPublicKeyRetrieval=true&serverTimezone=UTC
+      - SPRING_DATASOURCE_USERNAME=root
+      - SPRING_DATASOURCE_PASSWORD=senhasegura
+      - APP_JWT_SECRET=dev-secret-change
+      - APP_JWT_EXPIRATION=3600000
+    networks:
+      - campanha-net
+    depends_on:
+      campanha-db:
+        condition: service_healthy
+
+  # Frontend React
+  campanha-frontend:
+    build:
+      context: ./frontend-campanha
+      dockerfile: Dockerfile
+    container_name: campanha-frontend
+    restart: always
+    ports:
+      - "3000:80"
+    networks:
+      - campanha-net
+    depends_on:
+      - campanha-api
+
+networks:
+  campanha-net:
+    driver: bridge
+
+volumes:
+  mysql-data:
