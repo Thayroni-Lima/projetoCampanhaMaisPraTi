@@ -25,7 +25,7 @@ export default function LoginPage() {
         className="bg-white shadow-lg rounded-xl p-8 w-96"
       >
         <h2 className="text-2xl font-bold mb-4 text-blue-900 text-center">
-          Loginn
+          Login
         </h2>
         <input
           type="email"
