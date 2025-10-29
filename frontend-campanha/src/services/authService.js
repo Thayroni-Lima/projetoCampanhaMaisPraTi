@@ -5,7 +5,7 @@ const API_URL = import.meta.env.VITE_API_URL || 'http://localhost:8080';
 
 export async function login(credentials) {
   try {
-    const response = await axios.post(`${API_URL}/login`, credentials);
+    const response = await axios.post(`${API_URL}/auth/login`, credentials);
     return {
       token: response.data.token,
       user: { email: credentials.email },
@@ -18,7 +18,7 @@ export async function login(credentials) {
 
 export async function register(userData) {
   try {
-    const response = await axios.post(`${API_URL}/register`, userData);
+    const response = await axios.post(`${API_URL}/auth/register`, userData);
     return response.data;
   } catch (error) {
     throw error.response?.data || { message: "Erro ao registrar" };
@@ -38,7 +38,7 @@ export function removeToken() {
 }
 
 export const api = axios.create({
-  baseURL: "http://localhost:8080/",
+  baseURL: API_URL,
 });
 
 api.interceptors.request.use((config) => {
