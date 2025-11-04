@@ -50,8 +50,9 @@ public class PasswordResetService {
         String message = "Olá " + user.getName() + ",\n\n" +
                 "Clique no link abaixo para redefinir sua senha:\n" + link +
                 "\n\nO link expira em 1 hora.";
-
+        System.out.println(message);
         emailService.sendEmail(user.getEmail(), "Recuperação de Senha", message);
+        System.out.println(message);
     }
 
     // 2️⃣ Validar token

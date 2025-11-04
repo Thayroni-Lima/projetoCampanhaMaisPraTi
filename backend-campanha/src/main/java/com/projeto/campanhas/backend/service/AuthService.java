@@ -25,6 +25,7 @@ public class AuthService {
     private final AuthenticationManager authenticationManager;
     private final JwtService jwtService;
 
+    @SuppressWarnings("null")
     @Transactional
     public User register(RegisterRequest req) {
         if (userRepository.existsByEmail(req.getEmail())) {

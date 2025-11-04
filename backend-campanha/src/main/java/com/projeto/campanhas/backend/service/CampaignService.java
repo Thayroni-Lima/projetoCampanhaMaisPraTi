@@ -20,6 +20,7 @@ public class CampaignService {
     private final CampaignRepository campaignRepository;
     private final UserRepository userRepository;
 
+    @SuppressWarnings("null")
     @Transactional
     public Campaign create(CampaignCreateRequest req) {
         Authentication auth = SecurityContextHolder.getContext().getAuthentication();
@@ -45,6 +46,7 @@ public class CampaignService {
         return campaignRepository.findAll();
     }
 
+    @SuppressWarnings("null")
     public Campaign getById(String id) {
         return campaignRepository.findById(id).orElseThrow(() -> new IllegalArgumentException("Campanha não encontrada"));
     }

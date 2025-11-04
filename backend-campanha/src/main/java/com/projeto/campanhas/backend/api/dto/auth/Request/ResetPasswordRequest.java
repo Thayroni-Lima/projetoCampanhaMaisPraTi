@@ -2,7 +2,6 @@ package com.projeto.campanhas.backend.api.dto.auth.Request;
 
 public class ResetPasswordRequest {
     private String token;
-    
     private String newPassword;
 
     public void setToken(String token) {
