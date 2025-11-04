@@ -12,6 +12,7 @@ public class DataInitializer implements CommandLineRunner {
 
     private final UserTypeRepository userTypeRepository;
 
+    @SuppressWarnings("null")
     @Override
     public void run(String... args) {
         if (userTypeRepository.findByLabel("ADMIN").isEmpty()) {

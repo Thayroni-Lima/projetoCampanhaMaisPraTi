@@ -28,7 +28,8 @@ public class AuthAndCampaignIntegrationTest {
     @Autowired
     private ObjectMapper objectMapper;
 
-    @Test
+    @SuppressWarnings("null")
+@Test
     void register_login_create_campaign_flow() throws Exception {
         String registerPayload = """
                 {
