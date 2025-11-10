@@ -53,12 +53,14 @@ public class AuthController {
 
     // Recuperação e redefinição de senha
 
+    @Operation(summary = "Recuperar senha")
     @PostMapping("/recover-password")
     public MessageResponse recoverPassword(@RequestBody RecoverPasswordRequest req) {
         passwordResetService.initiatePasswordReset(req.getEmail());
         return new MessageResponse("Link de redefinição de senha enviado para o e-mail.");
     }
 
+    @Operation(summary = "Validar token de redefinição de senha")
     @GetMapping("/reset-password")
     public MessageResponse validateToken(@RequestParam String token) {
         boolean valid = passwordResetService.validateToken(token);
@@ -66,6 +68,7 @@ public class AuthController {
         return new MessageResponse("Token válido.");
     }
 
+    @Operation(summary = "Redefinir senha")
     @PostMapping("/reset-password")
     public MessageResponse resetPassword(@RequestBody ResetPasswordRequest req) {
         passwordResetService.resetPassword(req.getToken(), req.getNewPassword());

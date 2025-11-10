@@ -24,6 +24,17 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
     @SuppressWarnings("null")
     @Override
     protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain) throws IOException, jakarta.servlet.ServletException {
+        String path = request.getRequestURI();
+        // Pular autenticação JWT para endpoints do Swagger/OpenAPI
+        if (path.startsWith("/v3/api-docs") || 
+            path.startsWith("/swagger-ui") || 
+            path.startsWith("/swagger-resources") || 
+            path.startsWith("/webjars") ||
+            path.equals("/swagger-ui.html")) {
+            filterChain.doFilter(request, response);
+            return;
+        }
+        
         final String authHeader = request.getHeader("Authorization");
         final String jwt;
         final String username;
