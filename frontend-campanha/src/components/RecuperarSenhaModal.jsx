@@ -1,5 +1,5 @@
-import { useState } from "react";
 import { X } from "lucide-react";
+import { useState } from "react";
 
 export default function RecuperarSenhaModal({ onClose }) {
   const [email, setEmail] = useState("");
@@ -13,27 +13,30 @@ export default function RecuperarSenhaModal({ onClose }) {
     setError("");
 
     try {
-      // Aqui você fará a chamada para sua API
-      const response = await fetch("http://localhost:8080/auth/reset-password", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ email }),
-      });
+      const response = await fetch(
+        "http://localhost:8080/auth/recover-password",
+        {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ email }),
+        }
+      );
 
       if (!response.ok) {
-        throw new Error("Email não encontrado");
+        const errorData = await response.json().catch(() => ({}));
+        throw new Error(errorData.message || "Email não cadastrado.");
       }
 
       setSuccess(true);
     } catch (err) {
-      setError(err.message || "Erro ao enviar email");
+      setError(err.message || "Email não cadastrado.");
     } finally {
       setLoading(false);
     }
   }
 
   return (
-    <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 p-4">
+    <div className="fixed inset-0 bg-gray-300 bg-opacity-50 flex items-center justify-center z-50 p-4">
       <div className="bg-white rounded-xl shadow-2xl w-full max-w-md relative animate-fade-in">
         {/* Botão de fechar */}
         <button
@@ -50,7 +53,8 @@ export default function RecuperarSenhaModal({ onClose }) {
                 Recuperar Senha
               </h2>
               <p className="text-gray-600 text-sm mb-6">
-                Digite seu email e enviaremos instruções para redefinir sua senha.
+                Digite seu email e enviaremos instruções para redefinir sua
+                senha.
               </p>
 
               <form onSubmit={handleSubmit}>
@@ -95,15 +99,15 @@ export default function RecuperarSenhaModal({ onClose }) {
                   />
                 </svg>
               </div>
-              
+
               <h3 className="text-xl font-bold text-green-900 mb-2">
                 Email Enviado!
               </h3>
               <p className="text-gray-600 text-sm mb-6">
-                Enviamos instruções para <strong>{email}</strong>. 
-                Verifique sua caixa de entrada e spam.
+                Enviamos instruções para <strong>{email}</strong>. Verifique sua
+                caixa de entrada e spam.
               </p>
-              
+
               <button
                 onClick={onClose}
                 className="w-full bg-blue-600 text-white p-3 rounded-lg hover:bg-blue-700 transition"

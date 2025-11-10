@@ -1,5 +1,6 @@
 import { useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
+import RecuperarSenhaModal from "../../components/RecuperarSenhaModal";
 import { useAuth } from "../../contexts/AuthContext";
 
 export default function LoginPage() {
@@ -7,6 +8,7 @@ export default function LoginPage() {
   const navigate = useNavigate();
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
+  const [showRecuperarSenha, setShowRecuperarSenha] = useState(false);
 
   async function handleLogin(e) {
     e.preventDefault();
@@ -47,9 +49,24 @@ export default function LoginPage() {
         </button>
 
         <p className="text-sm text-center mt-4 text-gray-600">
+          Esqueceu a senha? Resgate{" "}
+          <button
+            type="button"
+            onClick={() => setShowRecuperarSenha(true)}
+            className="text-blue-600 hover:text-blue-800 underline"
+          >
+            aqui
+          </button>
+        </p>
+
+        <p className="text-sm text-center mt-2 text-gray-600">
           Não possui uma conta? <Link to="/register">Registrar</Link>
         </p>
       </form>
+
+      {showRecuperarSenha && (
+        <RecuperarSenhaModal onClose={() => setShowRecuperarSenha(false)} />
+      )}
     </div>
   );
 }
