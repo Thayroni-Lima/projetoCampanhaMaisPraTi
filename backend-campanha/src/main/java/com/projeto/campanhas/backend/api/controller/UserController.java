@@ -23,7 +23,7 @@ import java.util.stream.Collectors;
 public class UserController {
 
     private final UserRepository userRepository;
-    private final UserService userService; // Adicionar dependência
+    private final UserService userService;
 
     private static UserResponse toResponse(User user) {
         String label = null; // avoid touching lazy relation here
@@ -48,7 +48,7 @@ public class UserController {
     @SecurityRequirement(name = "bearerAuth")
     @GetMapping("/me")
     public ResponseEntity<UserResponse> me() {
-        User user = userService.getCurrentUser(); // Usar service
+        User user = userService.getCurrentUser();
         return ResponseEntity.ok(toResponse(user));
     }
 
@@ -58,5 +58,13 @@ public class UserController {
     public ResponseEntity<UserResponse> updateMe(@Valid @RequestBody UserUpdateRequest request) {
         User updatedUser = userService.updateCurrentUser(request);
         return ResponseEntity.ok(toResponse(updatedUser));
+    }
+
+    @Operation(summary = "Deletar usuário logado")
+    @SecurityRequirement(name = "bearerAuth")
+    @DeleteMapping("/me")
+    public ResponseEntity<Void> deleteMe() {
+        userService.deleteCurrentUser();
+        return ResponseEntity.noContent().build();
     }
 }

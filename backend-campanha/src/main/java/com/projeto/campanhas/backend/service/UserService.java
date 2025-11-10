@@ -2,6 +2,8 @@ package com.projeto.campanhas.backend.service;
 
 import com.projeto.campanhas.backend.api.dto.user.UserUpdateRequest;
 import com.projeto.campanhas.backend.domain.entity.User;
+import com.projeto.campanhas.backend.domain.repository.CampaignRepository;
+import com.projeto.campanhas.backend.domain.repository.PasswordResetTokenRepository;
 import com.projeto.campanhas.backend.domain.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.core.context.SecurityContextHolder;
@@ -15,6 +17,8 @@ public class UserService {
     
     private final UserRepository userRepository;
     private final PasswordEncoder passwordEncoder;
+    private final CampaignRepository campaignRepository;
+    private final PasswordResetTokenRepository passwordResetTokenRepository;
 
     /**
      * Atualiza os dados do usuário logado
@@ -76,5 +80,25 @@ public class UserService {
         String email = SecurityContextHolder.getContext().getAuthentication().getName();
         return userRepository.findByEmail(email)
                 .orElseThrow(() -> new IllegalStateException("Usuário não encontrado"));
+    }
+
+    /**
+     * Deleta o usuário logado
+     * Um usuário só pode deletar a si mesmo
+     */
+    @Transactional
+    public void deleteCurrentUser() {
+        String email = SecurityContextHolder.getContext().getAuthentication().getName();
+        User user = userRepository.findByEmail(email)
+                .orElseThrow(() -> new IllegalStateException("Usuário não encontrado"));
+
+        // Deletar todas as campanhas do usuário
+        campaignRepository.findByUserId(user.getId()).forEach(campaignRepository::delete);
+
+        // Deletar todos os tokens de reset de senha do usuário
+        passwordResetTokenRepository.deleteByUser(user);
+
+        // Deletar o usuário
+        userRepository.delete(user);
     }
 }
