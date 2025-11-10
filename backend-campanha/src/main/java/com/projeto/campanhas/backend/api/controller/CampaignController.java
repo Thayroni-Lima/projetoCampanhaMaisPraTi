@@ -2,6 +2,7 @@ package com.projeto.campanhas.backend.api.controller;
 
 import com.projeto.campanhas.backend.api.dto.campaign.CampaignCreateRequest;
 import com.projeto.campanhas.backend.api.dto.campaign.CampaignResponse;
+import com.projeto.campanhas.backend.api.dto.campaign.CampaignUpdateRequest;
 import com.projeto.campanhas.backend.domain.entity.Campaign;
 import com.projeto.campanhas.backend.service.CampaignService;
 import io.swagger.v3.oas.annotations.Operation;
@@ -26,7 +27,8 @@ public class CampaignController {
 
     private static CampaignResponse toResponse(Campaign c) {
         return new CampaignResponse(
-                c.getId(), c.getGoal(), c.getDeadline(), c.getTitle(), c.getDescription(), c.getPreview(), c.getCategory(), c.getCity(), c.getState(), c.getImageUrl(), c.getUserId()
+                c.getId(), c.getGoal(), c.getDeadline(), c.getTitle(), c.getDescription(), 
+                c.getPreview(), c.getCategory(), c.getCity(), c.getState(), c.getImageUrl(), c.getUserId()
         );
     }
 
@@ -40,16 +42,33 @@ public class CampaignController {
     }
 
     @Operation(summary = "Listar campanhas")
+    @SecurityRequirement(name = "bearerAuth")
+    @PreAuthorize("isAuthenticated()")
     @GetMapping
     public ResponseEntity<List<CampaignResponse>> listAll() {
-        List<CampaignResponse> list = campaignService.listAll().stream().map(CampaignController::toResponse).collect(Collectors.toList());
+        List<CampaignResponse> list = campaignService.listAll().stream()
+                .map(CampaignController::toResponse)
+                .collect(Collectors.toList());
         return ResponseEntity.ok(list);
     }
 
     @Operation(summary = "Buscar campanha por ID")
+    @SecurityRequirement(name = "bearerAuth")
+    @PreAuthorize("isAuthenticated()")
     @GetMapping("/{id}")
     public ResponseEntity<CampaignResponse> getById(@PathVariable String id) {
         Campaign c = campaignService.getById(id);
         return ResponseEntity.ok(toResponse(c));
+    }
+
+    @Operation(summary = "Atualizar campanha")
+    @SecurityRequirement(name = "bearerAuth")
+    @PreAuthorize("isAuthenticated()")
+    @PutMapping("/{id}")
+    public ResponseEntity<CampaignResponse> update(
+            @PathVariable String id,
+            @Valid @RequestBody CampaignUpdateRequest request) {
+        Campaign updatedCampaign = campaignService.update(id, request);
+        return ResponseEntity.ok(toResponse(updatedCampaign));
     }
 }
