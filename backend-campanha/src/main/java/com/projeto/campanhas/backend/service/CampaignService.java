@@ -113,4 +113,29 @@ public class CampaignService {
         // O @PreUpdate atualiza o updatedAt automaticamente
         return campaignRepository.save(campaign);
     }
+
+    /**
+     * Deleta uma campanha existente
+     * Apenas o dono da campanha pode deletá-la
+     */
+    @SuppressWarnings("null")
+    @Transactional
+    public void delete(String campaignId) {
+        // Buscar a campanha
+        Campaign campaign = campaignRepository.findById(campaignId)
+                .orElseThrow(() -> new IllegalArgumentException("Campanha não encontrada"));
+
+        // Verificar se o usuário logado é o dono da campanha
+        Authentication auth = SecurityContextHolder.getContext().getAuthentication();
+        String email = auth.getName();
+        User currentUser = userRepository.findByEmail(email)
+                .orElseThrow(() -> new IllegalStateException("Usuário não encontrado"));
+
+        if (!campaign.getUserId().equals(currentUser.getId())) {
+            throw new IllegalStateException("Você não tem permissão para deletar esta campanha");
+        }
+
+        // Deletar a campanha
+        campaignRepository.delete(campaign);
+    }
 }

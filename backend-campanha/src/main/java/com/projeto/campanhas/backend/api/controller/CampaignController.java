@@ -71,4 +71,13 @@ public class CampaignController {
         Campaign updatedCampaign = campaignService.update(id, request);
         return ResponseEntity.ok(toResponse(updatedCampaign));
     }
+
+    @Operation(summary = "Deletar campanha")
+    @SecurityRequirement(name = "bearerAuth")
+    @PreAuthorize("isAuthenticated()")
+    @DeleteMapping("/{id}")
+    public ResponseEntity<Void> delete(@PathVariable String id) {
+        campaignService.delete(id);
+        return ResponseEntity.noContent().build();
+    }
 }
