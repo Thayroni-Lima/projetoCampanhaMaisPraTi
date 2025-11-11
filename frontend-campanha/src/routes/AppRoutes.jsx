@@ -5,6 +5,7 @@ import MainLayout from "../layouts/MainLayout";
 
 import LoginPage from "../pages/public/LoginPage";
 import RegisterPage from "../pages/public/RegisterPage";
+import ResetPasswordPage from "../pages/public/ResetPasswordPage";
 
 import DashboardPage from "../pages/private/DashboardPage";
 import HomePage from "../pages/private/HomePage";
@@ -21,6 +22,7 @@ export default function AppRoutes() {
         {/* Rotas públicas - SEM MainLayout */}
         <Route path="/login" element={<LoginPage />} />
         <Route path="/register" element={<RegisterPage />} />
+        <Route path="/reset-password" element={<ResetPasswordPage />} />
         {/* Rotas privadas - COM MainLayout */}
         <Route
           element={

@@ -1,12 +1,13 @@
 package com.projeto.campanhas.backend.api.exception;
 
-import com.projeto.campanhas.backend.api.dto.ErrorResponse;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.AccessDeniedException;
 import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
+
+import com.projeto.campanhas.backend.api.dto.ErrorResponse;
 
 @RestControllerAdvice
 public class GlobalExceptionHandler {
@@ -66,6 +67,36 @@ public class GlobalExceptionHandler {
         
         ErrorResponse error = new ErrorResponse(
                 message,
+                HttpStatus.BAD_REQUEST.value(),
+                "Bad Request"
+        );
+        return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(error);
+    }
+
+    /**
+     * Trata exceções de token inválido
+     * Retorna 400 Bad Request
+     */
+    @ExceptionHandler(com.projeto.campanhas.backend.api.exception.TokenInvalidException.class)
+    public ResponseEntity<ErrorResponse> handleTokenInvalidException(
+            com.projeto.campanhas.backend.api.exception.TokenInvalidException ex) {
+        ErrorResponse error = new ErrorResponse(
+                ex.getMessage(),
+                HttpStatus.BAD_REQUEST.value(),
+                "Bad Request"
+        );
+        return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(error);
+    }
+
+    /**
+     * Trata exceções de token expirado
+     * Retorna 400 Bad Request
+     */
+    @ExceptionHandler(com.projeto.campanhas.backend.api.exception.TokenExpiredException.class)
+    public ResponseEntity<ErrorResponse> handleTokenExpiredException(
+            com.projeto.campanhas.backend.api.exception.TokenExpiredException ex) {
+        ErrorResponse error = new ErrorResponse(
+                ex.getMessage(),
                 HttpStatus.BAD_REQUEST.value(),
                 "Bad Request"
         );
