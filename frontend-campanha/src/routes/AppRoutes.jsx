@@ -40,7 +40,6 @@ export default function AppRoutes() {
           <Route path="/campanhas/editar/:id" element={<CampaignEditPage />} />
           <Route path="/campanhas/:id" element={<CampanhaDetailsPage />} />
         </Route>
-        *
         <Route path="*" element={<Navigate to="/login" replace />} />
       </Routes>
     </BrowserRouter>
