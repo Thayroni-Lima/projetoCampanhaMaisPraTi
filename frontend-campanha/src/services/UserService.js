@@ -1,15 +1,13 @@
-import axios from "axios";
-
-const API_URL = import.meta.env.VITE_API_URL || 'http://localhost:8080';
+import { api } from "./authService";
 
 const UserServices = {
   async getUser() {
-    const response = await axios.get(`${API_URL}/me`, { withCredentials: true });
+    const response = await api.get("/users/me");
     return response.data;
   },
 
   async updateUser(data) {
-    const response = await axios.put(API_URL, data, { withCredentials: true });
+    const response = await api.put("/users/me", data);
     return response.data;
   },
 };

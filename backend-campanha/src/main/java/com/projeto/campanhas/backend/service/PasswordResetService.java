@@ -49,7 +49,7 @@ public class PasswordResetService {
             PasswordResetToken resetToken = new PasswordResetToken(token, expiration, user);
             tokenRepository.save(resetToken);
 
-            String link = "http://localhost:5173/reset-password?token=" + token;
+            String link = "http://localhost:3000/reset-password?token=" + token;
             String message = "Olá " + user.getName() + ",\n\n" +
                     "Clique no link abaixo para redefinir sua senha:\n" + link +
                     "\n\nO link expira em 1 hora.\n\n" +

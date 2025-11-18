@@ -49,14 +49,13 @@ export default function LoginPage() {
         </button>
 
         <p className="text-sm text-center mt-4 text-gray-600">
-          Esqueceu a senha? Resgate{" "}
-          <button
+          <p
             type="button"
             onClick={() => setShowRecuperarSenha(true)}
-            className="text-blue-600 hover:text-blue-800 underline"
+            className="text-blue-600 hover:cursor-pointer hover:text-blue-800 underline"
           >
-            aqui
-          </button>
+            Esqueceu a senha? Resgate aqui
+          </p>
         </p>
 
         <p className="text-sm text-center mt-2 text-gray-600">

@@ -83,6 +83,7 @@ export function AuthProvider({ children }) {
     isAuthenticated: !!token,
     login,
     logout,
+    fetchUser,
   };
 
   return (

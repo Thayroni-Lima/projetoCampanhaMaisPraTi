@@ -1,14 +1,30 @@
 import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
+import { api } from "../../../services/authService";
 import { getAllCampaigns } from "../../../services/campaignService";
 
 export default function CampaignList() {
   const [campaigns, setCampaigns] = useState([]);
+  const [usersMap, setUsersMap] = useState({});
   const navigate = useNavigate();
 
   useEffect(() => {
+    loadUsers();
     loadCampaigns();
   }, []);
+
+  async function loadUsers() {
+    try {
+      const response = await api.get("/users");
+      const map = {};
+      response.data.forEach((user) => {
+        map[user.id] = user.name;
+      });
+      setUsersMap(map);
+    } catch (error) {
+      console.error("Erro ao carregar usuários:", error);
+    }
+  }
 
   async function loadCampaigns() {
     try {
@@ -36,7 +52,7 @@ export default function CampaignList() {
       {campaigns.length === 0 ? (
         <p className="text-gray-500">Nenhuma campanha encontrada.</p>
       ) : (
-        <div className="w-fit grid grid-cols-1 md:grid-cols-3 gap-6">
+        <div className="w-fit grid grid-cols-1 md:grid-cols-7 gap-6">
           {campaigns.map((c) => (
             <div
               key={c.id}
@@ -70,6 +86,10 @@ export default function CampaignList() {
                   <p>
                     <strong>Prazo:</strong>{" "}
                     {new Date(c.deadline).toLocaleDateString("pt-BR")}
+                  </p>
+                  <p>
+                    <strong>Criador:</strong>{" "}
+                    {usersMap[c.userId] || "Carregando..."}
                   </p>
                 </div>
               </div>

@@ -16,8 +16,8 @@ export const createCampaign = async (data) => {
   }
 };
 
-// 🔹 Atualizar campanha (pedenten do back) 
-// export const updateCampaign = (id, data) => api.put(`/campaigns/${id}`, data);
+// 🔹 Atualizar campanha
+export const updateCampaign = (id, data) => api.put(`/campaigns/${id}`, data);
 
-// 🔹 Excluir campanha (pedenten do back)
-// export const deleteCampaign = (id) => api.delete(`/campaigns/${id}`);
+// 🔹 Excluir campanha
+export const deleteCampaign = (id) => api.delete(`/campaigns/${id}`);

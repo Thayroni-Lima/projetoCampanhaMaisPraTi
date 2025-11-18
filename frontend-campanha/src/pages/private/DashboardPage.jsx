@@ -1,11 +1,14 @@
-import { Edit, Filter, Search, X } from "lucide-react";
+import { Edit, Search, Trash2, X } from "lucide-react";
 import { useCallback, useEffect, useMemo, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { useAuth } from "../../contexts/AuthContext";
-import { getAllCampaigns } from "../../services/campaignService";
+import {
+  deleteCampaign,
+  getAllCampaigns,
+} from "../../services/campaignService";
 
 export default function DashboardPage() {
-  const { user, logout } = useAuth();
+  const { user } = useAuth();
   const navigate = useNavigate();
   const [campaigns, setCampaigns] = useState([]);
   const [loading, setLoading] = useState(true);
@@ -98,6 +101,19 @@ export default function DashboardPage() {
     return new Date(dateString).toLocaleDateString("pt-BR");
   }
 
+  async function handleDelete(campaignId) {
+    if (!window.confirm("Tem certeza que deseja excluir esta campanha?")) {
+      return;
+    }
+    try {
+      await deleteCampaign(campaignId);
+      loadCampaigns(); // Recarrega a lista
+    } catch (error) {
+      console.error("Erro ao excluir campanha:", error);
+      alert("Erro ao excluir campanha. Tente novamente.");
+    }
+  }
+
   const hasActiveFilters = Object.values(filters).some((value) => value !== "");
 
   return (
@@ -113,10 +129,10 @@ export default function DashboardPage() {
           </p>
         </div>
         <button
-          onClick={logout}
-          className="bg-red-500 text-white px-4 py-2 rounded-lg hover:bg-red-600 transition"
+          onClick={() => navigate("/campanhas/nova")}
+          className="bg-blue-600 text-white px-4 py-2 rounded-lg hover:bg-blue-700 transition"
         >
-          Sair
+          Nova Campanha
         </button>
       </div>
 
@@ -134,95 +150,91 @@ export default function DashboardPage() {
           )}
         </div>
 
-        
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-4 pt-4 border-t">
-            <div>
-              <label className="block text-sm font-medium text-gray-700 mb-1">
-                Nome da Campanha
-              </label>
-              <div className="relative">
-                <Search
-                  size={18}
-                  className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400"
-                />
-                <input
-                  type="text"
-                  placeholder="Buscar por nome..."
-                  value={filters.name}
-                  onChange={(e) => handleFilterChange("name", e.target.value)}
-                  className="w-full pl-10 pr-3 py-2 border rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent ring-2 ring-black text-black"
-                />
-              </div>
-            </div>
-
-            <div>
-              <label className="block text-sm font-medium text-gray-700 mb-1">
-                Meta Mínima (R$)
-              </label>
-              <input
-                type="number"
-                placeholder="0.00"
-                value={filters.goalMin}
-                onChange={(e) => handleFilterChange("goalMin", e.target.value)}
-                className="w-full px-3 py-2 border rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent ring-2 ring-black text-black"
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-4 pt-4 border-t">
+          <div>
+            <label className="block text-sm font-medium text-gray-700 mb-1">
+              Nome da Campanha
+            </label>
+            <div className="relative">
+              <Search
+                size={18}
+                className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400"
               />
-            </div>
-
-            <div>
-              <label className="block text-sm font-medium text-gray-700 mb-1">
-                Meta Máxima (R$)
-              </label>
-              <input
-                type="number"
-                placeholder="999999.99"
-                value={filters.goalMax}
-                onChange={(e) => handleFilterChange("goalMax", e.target.value)}
-                className="w-full px-3 py-2 border rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent ring-2 ring-black text-black"
-              />
-            </div>
-
-            <div>
-              <label className="block text-sm font-medium text-gray-700 mb-1">
-                Prazo Inicial
-              </label>
-              <input
-                type="date"
-                value={filters.deadlineFrom}
-                onChange={(e) =>
-                  handleFilterChange("deadlineFrom", e.target.value)
-                }
-                className="w-full px-3 py-2 border rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent ring-2 ring-black text-black"
-              />
-            </div>
-
-            <div>
-              <label className="block text-sm font-medium text-gray-700 mb-1">
-                Prazo Final
-              </label>
-              <input
-                type="date"
-                value={filters.deadlineTo}
-                onChange={(e) =>
-                  handleFilterChange("deadlineTo", e.target.value)
-                }
-                className="w-full px-3 py-2 border rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent ring-2 ring-black text-black"
-              />
-            </div>
-
-            <div>
-              <label className="block text-sm font-medium text-gray-700 mb-1">
-                Categoria
-              </label>
               <input
                 type="text"
-                placeholder="Ex: Saúde, Educação..."
-                value={filters.category}
-                onChange={(e) => handleFilterChange("category", e.target.value)}
-                className="w-full px-3 py-2 border rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent ring-2 ring-black text-black"
+                placeholder="Buscar por nome..."
+                value={filters.name}
+                onChange={(e) => handleFilterChange("name", e.target.value)}
+                className="w-full pl-10 pr-3 py-2 border rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent ring-2 ring-black text-black"
               />
             </div>
           </div>
-        
+
+          <div>
+            <label className="block text-sm font-medium text-gray-700 mb-1">
+              Meta Mínima (R$)
+            </label>
+            <input
+              type="number"
+              placeholder="0.00"
+              value={filters.goalMin}
+              onChange={(e) => handleFilterChange("goalMin", e.target.value)}
+              className="w-full px-3 py-2 border rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent ring-2 ring-black text-black"
+            />
+          </div>
+
+          <div>
+            <label className="block text-sm font-medium text-gray-700 mb-1">
+              Meta Máxima (R$)
+            </label>
+            <input
+              type="number"
+              placeholder="999999.99"
+              value={filters.goalMax}
+              onChange={(e) => handleFilterChange("goalMax", e.target.value)}
+              className="w-full px-3 py-2 border rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent ring-2 ring-black text-black"
+            />
+          </div>
+
+          <div>
+            <label className="block text-sm font-medium text-gray-700 mb-1">
+              Prazo Inicial
+            </label>
+            <input
+              type="date"
+              value={filters.deadlineFrom}
+              onChange={(e) =>
+                handleFilterChange("deadlineFrom", e.target.value)
+              }
+              className="w-full px-3 py-2 border rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent ring-2 ring-black text-black"
+            />
+          </div>
+
+          <div>
+            <label className="block text-sm font-medium text-gray-700 mb-1">
+              Prazo Final
+            </label>
+            <input
+              type="date"
+              value={filters.deadlineTo}
+              onChange={(e) => handleFilterChange("deadlineTo", e.target.value)}
+              className="w-full px-3 py-2 border rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent ring-2 ring-black text-black"
+            />
+          </div>
+
+          <div>
+            <label className="block text-sm font-medium text-gray-700 mb-1">
+              Categoria
+            </label>
+            <input
+              type="text"
+              placeholder="Ex: Saúde, Educação..."
+              value={filters.category}
+              onChange={(e) => handleFilterChange("category", e.target.value)}
+              className="w-full px-3 py-2 border rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent ring-2 ring-black text-black"
+            />
+          </div>
+        </div>
       </div>
 
       {/* Estatísticas */}
@@ -343,17 +355,25 @@ export default function DashboardPage() {
                       </div>
                     </td>
                     <td className="px-6 py-4 whitespace-nowrap text-right text-sm font-medium">
-                      <button
-                        onClick={() => {
-                          const url = `/campanhas/editar/${campaign.id}`;
-                          window.open(url, '_blank');
-                        }
-                        }
-                        className="inline-flex items-center gap-2 bg-blue-600 text-white px-4 py-2 rounded-lg hover:bg-blue-700 transition"
-                      >
-                        <Edit size={16} />
-                        Alterar
-                      </button>
+                      <div className="flex items-center justify-end gap-2">
+                        <button
+                          onClick={() => {
+                            const url = `/campanhas/editar/${campaign.id}`;
+                            window.open(url, "_blank");
+                          }}
+                          className="inline-flex items-center gap-2 bg-blue-600 text-white px-4 py-2 rounded-lg hover:bg-blue-700 transition"
+                        >
+                          <Edit size={16} />
+                          Alterar
+                        </button>
+                        <button
+                          onClick={() => handleDelete(campaign.id)}
+                          className="inline-flex items-center gap-2 bg-red-600 text-white px-4 py-2 rounded-lg hover:bg-red-700 transition"
+                        >
+                          <Trash2 size={16} />
+                          Excluir
+                        </button>
+                      </div>
                     </td>
                   </tr>
                 ))}
