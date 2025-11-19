@@ -1,9 +1,14 @@
-import { useState } from "react";
-import { useNavigate } from "react-router-dom";
-import { createCampaign } from "../../../services/campaignService";
+import { useEffect, useState } from "react";
+import { useNavigate, useParams } from "react-router-dom";
+import {
+  getCampaignById,
+  updateCampaign,
+} from "../../../services/campaignService";
 
 export default function CampaignEditPage() {
+  const { id } = useParams();
   const navigate = useNavigate();
+  const [loading, setLoading] = useState(true);
   const [formData, setFormData] = useState({
     title: "",
     description: "",
@@ -16,6 +21,42 @@ export default function CampaignEditPage() {
     preview: "",
   });
 
+  useEffect(() => {
+    const fetchCampaign = async () => {
+      try {
+        const response = await getCampaignById(id);
+        const campaign = response.data;
+
+        // Formatar deadline para input type="date" (YYYY-MM-DD)
+        const deadlineDate = new Date(campaign.deadline);
+        const formattedDeadline = deadlineDate.toISOString().split("T")[0];
+
+        setFormData({
+          title: campaign.title || "",
+          description: campaign.description || "",
+          goal: campaign.goal?.toString() || "",
+          deadline: formattedDeadline,
+          category: campaign.category || "",
+          city: campaign.city || "",
+          state: campaign.state || "",
+          imageUrl: campaign.imageUrl || "",
+          preview: campaign.preview || "",
+        });
+      } catch (error) {
+        console.error("Erro ao carregar campanha:", error);
+        alert("Erro ao carregar campanha. Tente novamente.");
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    if (id) {
+      fetchCampaign();
+    } else {
+      setLoading(false);
+    }
+  }, [id]);
+
   const handleChange = (e) => {
     const { name, value } = e.target;
     setFormData((prev) => ({ ...prev, [name]: value }));
@@ -26,27 +67,37 @@ export default function CampaignEditPage() {
     try {
       const dataToSend = {
         ...formData,
+        goal: parseFloat(formData.goal),
         deadline: new Date(`${formData.deadline}T00:00:00Z`).toISOString(),
       };
 
-      await createCampaign(dataToSend);
-      alert("Campanha criada com sucesso!");
-      navigate("/campanhas");
+      await updateCampaign(id, dataToSend);
+      alert("Campanha atualizada com sucesso!");
+      navigate("/dashboard");
     } catch (error) {
-      console.error("Erro ao criar campanha:", error);
-      // Opcionalmente, mostre a mensagem de erro pro usuário
-      alert("Erro ao criar campanha. Verifique os dados e tente novamente.");
+      console.error("Erro ao atualizar campanha:", error);
+      alert(
+        "Erro ao atualizar campanha. Verifique os dados e tente novamente."
+      );
     }
   };
 
+  if (loading) {
+    return (
+      <div className="h-screen w-full flex items-center justify-center bg-gray-100">
+        <p className="text-gray-600">Carregando dados da campanha...</p>
+      </div>
+    );
+  }
+
   return (
-    <div className="h-screen w-screen flex items-center justify-center bg-gray-100">
+    <div className="h-screen w-full flex items-center justify-center bg-gray-100">
       <form
         onSubmit={handleSubmit}
         className="bg-white shadow-lg rounded-xl p-8 w-96"
       >
         <h2 className="text-2xl font-bold mb-4 text-blue-900 text-center">
-          Nova Campanha
+          Editar Campanha {formData.title ? `- ${formData.title}` : ""}
         </h2>
         <div>
           <input
@@ -123,7 +174,7 @@ export default function CampaignEditPage() {
             type="submit"
             className="w-full mt-6 bg-blue-600 hover:bg-blue-700 text-white py-2 rounded-lg"
           >
-            Criar Campanha
+            Editar Campanha
           </button>
         </div>
       </form>

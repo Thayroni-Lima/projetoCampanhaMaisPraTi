@@ -84,7 +84,8 @@ export default function CampaignDetailsPage() {
           {new Date(campaign.deadline).toLocaleDateString()}
         </p>
         <p>
-          <strong>Status:</strong> {campaign.active ? "Ativa" : "Encerrada"}
+          <strong>Status:</strong>{" "}
+          {new Date(campaign.deadline) < new Date() ? "Encerrada" : "Ativa"}
         </p>
         <p>
           <strong>Criador:</strong> {creatorName || "Carregando..."}

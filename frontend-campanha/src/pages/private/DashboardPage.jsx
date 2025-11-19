@@ -1,4 +1,4 @@
-import { Edit, Search, Trash2, X } from "lucide-react";
+import { Edit, Eye, Search, Trash2, X } from "lucide-react";
 import { useCallback, useEffect, useMemo, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { useAuth } from "../../contexts/AuthContext";
@@ -356,6 +356,13 @@ export default function DashboardPage() {
                     </td>
                     <td className="px-6 py-4 whitespace-nowrap text-right text-sm font-medium">
                       <div className="flex items-center justify-end gap-2">
+                        <button
+                          onClick={() => navigate(`/campanhas/${campaign.id}`)}
+                          className="inline-flex items-center gap-2 bg-green-600 text-white px-4 py-2 rounded-lg hover:bg-green-700 transition"
+                        >
+                          <Eye size={16} />
+                          Detalhes
+                        </button>
                         <button
                           onClick={() => {
                             const url = `/campanhas/editar/${campaign.id}`;
