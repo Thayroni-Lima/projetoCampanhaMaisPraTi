@@ -1,10 +1,14 @@
 // src/pages/CampaignDetailsPage.jsx
-import { ArrowLeft } from "lucide-react";
+import { ArrowLeft, HandHeart, Pencil, Trash2 } from "lucide-react";
 import { useEffect, useState } from "react";
 import { useNavigate, useParams } from "react-router-dom";
 import { useAuth } from "../../../contexts/AuthContext";
 import { api } from "../../../services/authService";
-import { getCampaignById } from "../../../services/campaignService";
+import {
+  deleteCampaign,
+  donateCampaign,
+  getCampaignById,
+} from "../../../services/campaignService";
 
 export default function CampaignDetailsPage() {
   const { id } = useParams();
@@ -55,6 +59,37 @@ export default function CampaignDetailsPage() {
     navigate(`/campanhas/editar/${campaign.id}`);
   };
 
+  const handleDonate = async () => {
+    try {
+      await donateCampaign(campaign.id);
+      // Atualiza localmente o contador de doações
+      setCampaign((prev) => ({
+        ...prev,
+        donationsCount: (prev?.donationsCount || 0) + 1,
+      }));
+      alert("Obrigado pela sua doação!");
+    } catch (err) {
+      console.error("Erro ao doar:", err);
+      alert(
+        err?.response?.data?.message ||
+          "Não foi possível realizar a doação. Tente novamente."
+      );
+    }
+  };
+
+  const handleDelete = async () => {
+    if (!window.confirm("Tem certeza que deseja excluir esta campanha?"))
+      return;
+    try {
+      await deleteCampaign(campaign.id);
+      alert("Campanha excluída com sucesso.");
+      navigate("/dashboard");
+    } catch (err) {
+      console.error("Erro ao excluir campanha:", err);
+      alert("Erro ao excluir campanha. Tente novamente.");
+    }
+  };
+
   return (
     <div className="max-w-3xl mx-auto mt-10 rounded-lg p-6">
       <button
@@ -84,8 +119,7 @@ export default function CampaignDetailsPage() {
           <strong>Meta:</strong> R$ {campaign.goal?.toFixed(2)}
         </p>
         <p>
-          <strong>Arrecadado:</strong> R${" "}
-          {campaign.active ? campaign.collectedAmount?.toFixed(2) : "0.00"}
+          <strong>Doações:</strong> {campaign.donationsCount ?? 0}
         </p>
         <p>
           <strong>Prazo:</strong>{" "}
@@ -100,14 +134,31 @@ export default function CampaignDetailsPage() {
         </p>
       </div>
 
-      <div className="flex gap-4">
-        {campaign.userId === user?.id && (
+      <div className="flex gap-3">
+        {/* Voltar já acima */}
+        {campaign.userId !== user?.id && (
           <button
-            onClick={handleEdit}
-            className="px-4 py-2 bg-blue-500 text-white rounded hover:bg-blue-600 transition"
+            onClick={handleDonate}
+            className="inline-flex items-center gap-2 px-4 py-2 bg-green-600 text-white rounded hover:bg-green-700 transition"
           >
-            Editar
+            <HandHeart size={18} /> Doar
           </button>
+        )}
+        {campaign.userId === user?.id && (
+          <>
+            <button
+              onClick={handleEdit}
+              className="inline-flex items-center gap-2 px-4 py-2 bg-blue-600 text-white rounded hover:bg-blue-700 transition"
+            >
+              <Pencil size={18} /> Editar
+            </button>
+            <button
+              onClick={handleDelete}
+              className="inline-flex items-center gap-2 px-4 py-2 bg-red-600 text-white rounded hover:bg-red-700 transition"
+            >
+              <Trash2 size={18} /> Excluir
+            </button>
+          </>
         )}
       </div>
     </div>

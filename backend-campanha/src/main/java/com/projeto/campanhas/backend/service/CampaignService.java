@@ -13,6 +13,8 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
+import java.util.Locale;
+import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor
@@ -45,6 +47,30 @@ public class CampaignService {
 
     public List<Campaign> listAll() {
         return campaignRepository.findAll();
+    }
+
+    public List<Campaign> listFiltered(String title, String category, boolean excludeMine) {
+        List<Campaign> all = campaignRepository.findAll();
+
+        String currentUserId = null;
+        if (excludeMine) {
+            Authentication auth = SecurityContextHolder.getContext().getAuthentication();
+            if (auth != null) {
+                String email = auth.getName();
+                currentUserId = userRepository.findByEmail(email)
+                        .map(User::getId)
+                        .orElse(null);
+            }
+        }
+
+        final String fTitle = title == null ? null : title.toLowerCase(Locale.ROOT).trim();
+        final String fCategory = category == null ? null : category.toLowerCase(Locale.ROOT).trim();
+
+        return all.stream()
+                .filter(c -> currentUserId == null || !c.getUserId().equals(currentUserId))
+                .filter(c -> fTitle == null || fTitle.isBlank() || c.getTitle() != null && c.getTitle().toLowerCase(Locale.ROOT).contains(fTitle))
+                .filter(c -> fCategory == null || fCategory.isBlank() || c.getCategory() != null && c.getCategory().toLowerCase(Locale.ROOT).contains(fCategory))
+                .collect(Collectors.toList());
     }
 
     @SuppressWarnings("null")
@@ -137,5 +163,29 @@ public class CampaignService {
 
         // Deletar a campanha
         campaignRepository.delete(campaign);
+    }
+
+    /**
+     * Incrementa contador de doações de forma simples.
+     * Bloqueia doação na própria campanha.
+     */
+    @Transactional
+    public Campaign donate(String campaignId) {
+        Campaign campaign = campaignRepository.findById(campaignId)
+                .orElseThrow(() -> new IllegalArgumentException("Campanha não encontrada"));
+
+        Authentication auth = SecurityContextHolder.getContext().getAuthentication();
+        String email = auth.getName();
+        User currentUser = userRepository.findByEmail(email)
+                .orElseThrow(() -> new IllegalStateException("Usuário não encontrado"));
+
+        if (campaign.getUserId().equals(currentUser.getId())) {
+            throw new IllegalStateException("Você não pode doar para sua própria campanha");
+        }
+
+        Integer count = campaign.getDonationsCount();
+        if (count == null) count = 0;
+        campaign.setDonationsCount(count + 1);
+        return campaignRepository.save(campaign);
     }
 }

@@ -28,7 +28,7 @@ public class CampaignController {
     private static CampaignResponse toResponse(Campaign c) {
         return new CampaignResponse(
                 c.getId(), c.getGoal(), c.getDeadline(), c.getTitle(), c.getDescription(), 
-                c.getPreview(), c.getCategory(), c.getCity(), c.getState(), c.getImageUrl(), c.getUserId()
+                c.getPreview(), c.getCategory(), c.getCity(), c.getState(), c.getImageUrl(), c.getUserId(), c.getDonationsCount()
         );
     }
 
@@ -45,8 +45,12 @@ public class CampaignController {
     @SecurityRequirement(name = "bearerAuth")
     @PreAuthorize("isAuthenticated()")
     @GetMapping
-    public ResponseEntity<List<CampaignResponse>> listAll() {
-        List<CampaignResponse> list = campaignService.listAll().stream()
+    public ResponseEntity<List<CampaignResponse>> listAll(
+            @RequestParam(name = "title", required = false) String title,
+            @RequestParam(name = "category", required = false) String category,
+            @RequestParam(name = "excludeMine", required = false, defaultValue = "false") boolean excludeMine
+    ) {
+        List<CampaignResponse> list = campaignService.listFiltered(title, category, excludeMine).stream()
                 .map(CampaignController::toResponse)
                 .collect(Collectors.toList());
         return ResponseEntity.ok(list);
@@ -79,5 +83,14 @@ public class CampaignController {
     public ResponseEntity<Void> delete(@PathVariable String id) {
         campaignService.delete(id);
         return ResponseEntity.noContent().build();
+    }
+
+    @Operation(summary = "Doar para campanha (incremento simples)")
+    @SecurityRequirement(name = "bearerAuth")
+    @PreAuthorize("isAuthenticated()")
+    @PatchMapping("/{id}/donate")
+    public ResponseEntity<CampaignResponse> donate(@PathVariable String id) {
+        Campaign c = campaignService.donate(id);
+        return ResponseEntity.ok(toResponse(c));
     }
 }

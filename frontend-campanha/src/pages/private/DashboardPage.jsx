@@ -364,6 +364,13 @@ export default function DashboardPage() {
                           Detalhes
                         </button>
                         <button
+                          disabled
+                          title="Você não pode doar para sua própria campanha"
+                          className="inline-flex items-center gap-2 bg-gray-300 text-gray-600 px-4 py-2 rounded-lg cursor-not-allowed"
+                        >
+                          💗 Doar
+                        </button>
+                        <button
                           onClick={() => {
                             const url = `/campanhas/editar/${campaign.id}`;
                             window.open(url, "_blank");

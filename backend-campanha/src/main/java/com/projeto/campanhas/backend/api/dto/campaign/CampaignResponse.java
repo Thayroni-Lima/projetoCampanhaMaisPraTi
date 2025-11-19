@@ -20,4 +20,5 @@ public class CampaignResponse {
     private String state;
     private String imageUrl;
     private String userId;
+    private Integer donationsCount;
 }

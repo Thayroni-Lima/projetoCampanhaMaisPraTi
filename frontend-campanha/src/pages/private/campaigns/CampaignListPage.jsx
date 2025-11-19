@@ -1,17 +1,28 @@
 import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
+import { useAuth } from "../../../contexts/AuthContext";
 import { api } from "../../../services/authService";
-import { getAllCampaigns } from "../../../services/campaignService";
+import {
+  donateCampaign,
+  getAllCampaigns,
+} from "../../../services/campaignService";
 
 export default function CampaignList() {
   const [campaigns, setCampaigns] = useState([]);
   const [usersMap, setUsersMap] = useState({});
+  const [nameFilter, setNameFilter] = useState("");
+  const [categoryFilter, setCategoryFilter] = useState("");
   const navigate = useNavigate();
+  const { user } = useAuth();
 
   useEffect(() => {
     loadUsers();
-    loadCampaigns();
   }, []);
+
+  useEffect(() => {
+    loadCampaigns();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [nameFilter, categoryFilter]);
 
   async function loadUsers() {
     try {
@@ -28,31 +39,69 @@ export default function CampaignList() {
 
   async function loadCampaigns() {
     try {
-      const response = await getAllCampaigns();
+      const response = await getAllCampaigns({
+        excludeMine: true,
+        title: nameFilter || undefined,
+        category: categoryFilter || undefined,
+      });
       setCampaigns(response.data);
     } catch (error) {
       console.error("Erro ao carregar campanhas:", error);
     }
   }
 
+  const handleDonate = async (e, id) => {
+    e.stopPropagation();
+    try {
+      await donateCampaign(id);
+      alert("Obrigado pela sua doação!");
+      // Opcional: atualizar contadores no card se exibirmos
+    } catch (err) {
+      console.error("Erro ao doar:", err);
+      alert("Não foi possível realizar a doação. Tente novamente.");
+    }
+  };
+
   return (
     <div className="p-6">
       <div className="flex justify-between items-center mb-6">
-        <h1 className="text-2xl font-bold mb-4 text-blue-900 text-center">
-          Campanhas
-        </h1>
+        <h1 className="text-2xl font-bold text-blue-900">Campanhas</h1>
         <button
           onClick={() => navigate("/campanhas/nova")}
-          className="bg-blue-600 text-white px-4 py-2 rounded-md hover:bg-blue-700"
+          className="bg-blue-700 text-white px-4 py-2 rounded-md hover:bg-blue-800 transition"
         >
           Nova Campanha
         </button>
       </div>
 
+      {/* Filtros */}
+      <div className="bg-white rounded-lg shadow p-4 mb-6">
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+          <div>
+            <label className="block text-sm text-gray-700 mb-1">Nome</label>
+            <input
+              value={nameFilter}
+              onChange={(e) => setNameFilter(e.target.value)}
+              placeholder="Buscar por nome..."
+              className="w-full px-3 py-2 border rounded-md focus:ring-2 focus:ring-blue-600 text-black"
+            />
+          </div>
+          <div>
+            <label className="block text-sm text-gray-700 mb-1">Categoria</label>
+            <input
+              value={categoryFilter}
+              onChange={(e) => setCategoryFilter(e.target.value)}
+              placeholder="Ex: Saúde, Educação..."
+              className="w-full px-3 py-2 border rounded-md focus:ring-2 focus:ring-blue-600 text-black"
+            />
+          </div>
+        </div>
+      </div>
+
       {campaigns.length === 0 ? (
         <p className="text-gray-500">Nenhuma campanha encontrada.</p>
       ) : (
-        <div className="w-fit grid grid-cols-1 md:grid-cols-7 gap-6">
+        <div className="w-fit grid grid-cols-1 md:grid-cols-4 gap-6">
           {campaigns.map((c) => (
             <div
               key={c.id}
@@ -73,9 +122,9 @@ export default function CampaignList() {
                   {c.preview}
                 </p>
 
-                <div className="mt-3 text-sm text-gray-500">
+                <div className="mt-3 text-sm text-gray-600">
                   <p>
-                    <strong>Meta:</strong> {c.goal}
+                    <strong>Meta:</strong> R$ {Number(c.goal).toFixed(2)}
                   </p>
                   <p>
                     <strong>Categoria:</strong> {c.category}
@@ -88,9 +137,31 @@ export default function CampaignList() {
                     {new Date(c.deadline).toLocaleDateString("pt-BR")}
                   </p>
                   <p>
-                    <strong>Criador:</strong>{" "}
-                    {usersMap[c.userId] || "Carregando..."}
+                    <strong>Criador:</strong> {usersMap[c.userId] || "..."}
                   </p>
+                </div>
+
+                <div className="mt-4 flex gap-2">
+                  <button
+                    onClick={(e) => {
+                      e.stopPropagation();
+                      navigate(`/campanhas/${c.id}`);
+                    }}
+                    className="flex-1 bg-green-600 text-white px-3 py-2 rounded-md hover:bg-green-700 transition"
+                  >
+                    Detalhes
+                  </button>
+                  <button
+                    onClick={(e) => handleDonate(e, c.id)}
+                    disabled={c.userId === user?.id}
+                    className={`flex-1 px-3 py-2 rounded-md transition ${
+                      c.userId === user?.id
+                        ? "bg-gray-300 text-gray-600 cursor-not-allowed"
+                        : "bg-blue-600 text-white hover:bg-blue-700"
+                    }`}
+                  >
+                    Doar
+                  </button>
                 </div>
               </div>
             </div>
