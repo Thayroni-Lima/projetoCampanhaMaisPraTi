@@ -40,7 +40,8 @@ export default function CampaignList() {
   async function loadCampaigns() {
     try {
       const response = await getAllCampaigns({
-        excludeMine: true,
+        // Exibir todas as campanhas, inclusive as do usuário
+        // Removendo excludeMine para não ocultar campanhas criadas pelo próprio usuário
         title: nameFilter || undefined,
         category: categoryFilter || undefined,
       });

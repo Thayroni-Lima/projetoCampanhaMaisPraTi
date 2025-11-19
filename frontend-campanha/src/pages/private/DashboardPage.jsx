@@ -371,10 +371,7 @@ export default function DashboardPage() {
                           💗 Doar
                         </button>
                         <button
-                          onClick={() => {
-                            const url = `/campanhas/editar/${campaign.id}`;
-                            window.open(url, "_blank");
-                          }}
+                          onClick={() => navigate(`/campanhas/editar/${campaign.id}`)}
                           className="inline-flex items-center gap-2 bg-blue-600 text-white px-4 py-2 rounded-lg hover:bg-blue-700 transition"
                         >
                           <Edit size={16} />
