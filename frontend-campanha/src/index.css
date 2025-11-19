@@ -13,6 +13,10 @@
   text-rendering: optimizeLegibility;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
+
+  --btn-bg: #2563eb; /* azul primário acessível */
+  --btn-bg-hover: #1d4ed8; /* azul mais escuro para hover */
+  --btn-disabled-bg: #9ca3af; /* cinza para disabled */
 }
 
 a {
@@ -48,18 +52,26 @@ button {
   border: 1px solid transparent;
   padding: 0.6em 1.2em;
   font-size: 1em;
-  font-weight: 500;
+  font-weight: 600; /* leve reforço para legibilidade */
   font-family: inherit;
-  background-color: #1a1a1a;
+  background-color: var(--btn-bg);
+  color: #fff;
   cursor: pointer;
-  transition: border-color 0.25s;
+  transition: background-color 0.25s, border-color 0.25s;
 }
 button:hover {
-  border-color: #646cff;
+  background-color: var(--btn-bg-hover);
+  border-color: transparent;
 }
 button:focus,
 button:focus-visible {
   outline: 4px auto -webkit-focus-ring-color;
+}
+button:disabled {
+  background-color: var(--btn-disabled-bg);
+  color: #ffffff;
+  opacity: 0.75;
+  cursor: not-allowed;
 }
 
 @media (prefers-color-scheme: light) {
@@ -70,7 +82,5 @@ button:focus-visible {
   a:hover {
     color: #747bff;
   }
-  button {
-    background-color: #f9f9f9;
-  }
+  /* Removido override claro do botão para manter contraste */
 }
