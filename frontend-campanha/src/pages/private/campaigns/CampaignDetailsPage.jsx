@@ -1,4 +1,5 @@
 // src/pages/CampaignDetailsPage.jsx
+import { ArrowLeft } from "lucide-react";
 import { useEffect, useState } from "react";
 import { useNavigate, useParams } from "react-router-dom";
 import { useAuth } from "../../../contexts/AuthContext";
@@ -55,7 +56,14 @@ export default function CampaignDetailsPage() {
   };
 
   return (
-    <div className="max-w-3xl mx-auto mt-10  rounded-lg p-6">
+    <div className="max-w-3xl mx-auto mt-10 rounded-lg p-6">
+      <button
+        onClick={() => navigate(-1)}
+        className="flex items-center gap-2 text-indigo-600 hover:text-indigo-800 mb-4 transition"
+      >
+        <ArrowLeft size={20} />
+        <span>Voltar</span>
+      </button>
       <h2 className="text-3xl font-bold text-indigo-700 mb-4">
         {campaign.title}
       </h2>

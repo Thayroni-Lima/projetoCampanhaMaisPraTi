@@ -1,7 +1,7 @@
 import { useEffect, useState } from "react";
 import { Link, useNavigate, useSearchParams } from "react-router-dom";
 
-const API_URL = "http://localhost:8080";
+const API_URL = import.meta.env.VITE_API_URL || "http://localhost:8080";
 
 export default function ResetPasswordPage() {
   const navigate = useNavigate();
@@ -45,7 +45,7 @@ export default function ResetPasswordPage() {
               "Token inválido ou expirado. Solicite um novo link."
           );
         }
-      } catch(err) {
+      } catch (err) {
         setError(err.message || "Erro ao validar token. Tente novamente.");
       } finally {
         setValidatingToken(false);

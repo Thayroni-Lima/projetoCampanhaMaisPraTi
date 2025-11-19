@@ -1,4 +1,4 @@
-version: '3.8'
+version: "3.8"
 
 services:
   # Banco de Dados MySQL
@@ -47,6 +47,8 @@ services:
     build:
       context: ./frontend-campanha
       dockerfile: Dockerfile
+      args:
+        VITE_API_URL: ${VITE_API_URL:-http://localhost:8080}
     container_name: campanha-frontend
     restart: always
     ports:

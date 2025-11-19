@@ -1,6 +1,8 @@
 import { X } from "lucide-react";
 import { useState } from "react";
 
+const API_URL = import.meta.env.VITE_API_URL || "http://localhost:8080";
+
 export default function RecuperarSenhaModal({ onClose }) {
   const [email, setEmail] = useState("");
   const [loading, setLoading] = useState(false);
@@ -13,14 +15,11 @@ export default function RecuperarSenhaModal({ onClose }) {
     setError("");
 
     try {
-      const response = await fetch(
-        "http://localhost:8080/auth/recover-password",
-        {
-          method: "POST",
-          headers: { "Content-Type": "application/json" },
-          body: JSON.stringify({ email }),
-        }
-      );
+      const response = await fetch(`${API_URL}/auth/recover-password`, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ email }),
+      });
 
       if (!response.ok) {
         const errorData = await response.json().catch(() => ({}));
