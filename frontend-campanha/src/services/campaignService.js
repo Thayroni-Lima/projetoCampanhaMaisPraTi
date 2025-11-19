@@ -24,3 +24,7 @@ export const deleteCampaign = (id) => api.delete(`/campaigns/${id}`);
 
 // 🔹 Doar para campanha (incremento simples)
 export const donateCampaign = (id) => api.patch(`/campaigns/${id}/donate`);
+
+// 🔹 Doar com valor específico
+export const donateCampaignAmount = (id, amount) =>
+  api.post(`/campaigns/${id}/donations`, { amount });

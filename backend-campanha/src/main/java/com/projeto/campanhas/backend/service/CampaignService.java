@@ -12,6 +12,7 @@ import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.math.BigDecimal;
 import java.util.List;
 import java.util.Locale;
 import java.util.stream.Collectors;
@@ -181,6 +182,38 @@ public class CampaignService {
         Integer count = campaign.getDonationsCount();
         if (count == null) count = 0;
         campaign.setDonationsCount(count + 1);
+        return campaignRepository.save(campaign);
+    }
+
+    /**
+     * Doação com valor. Permite ultrapassar a meta (regra de negócio).
+     */
+    @Transactional
+    public Campaign donateAmount(String campaignId, BigDecimal amount) {
+        if (amount == null || amount.compareTo(new BigDecimal("0.01")) < 0) {
+            throw new IllegalArgumentException("Valor da doação inválido");
+        }
+
+        Campaign campaign = campaignRepository.findById(campaignId)
+                .orElseThrow(() -> new IllegalArgumentException("Campanha não encontrada"));
+
+        Authentication auth = SecurityContextHolder.getContext().getAuthentication();
+        String email = auth.getName();
+        User currentUser = userRepository.findByEmail(email)
+                .orElseThrow(() -> new IllegalStateException("Usuário não encontrado"));
+
+        if (campaign.getUserId().equals(currentUser.getId())) {
+            throw new IllegalStateException("Você não pode doar para sua própria campanha");
+        }
+
+        // Soma ao total arrecadado e incrementa contagem
+        campaign.setAmountRaised(
+                (campaign.getAmountRaised() == null ? BigDecimal.ZERO : campaign.getAmountRaised())
+                        .add(amount)
+        );
+        Integer count = campaign.getDonationsCount();
+        campaign.setDonationsCount((count == null ? 0 : count) + 1);
+
         return campaignRepository.save(campaign);
     }
 }

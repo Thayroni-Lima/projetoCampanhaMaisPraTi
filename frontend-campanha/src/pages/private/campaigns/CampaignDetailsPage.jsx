@@ -7,6 +7,7 @@ import { api } from "../../../services/authService";
 import {
   deleteCampaign,
   donateCampaign,
+  donateCampaignAmount,
   getCampaignById,
 } from "../../../services/campaignService";
 
@@ -18,6 +19,8 @@ export default function CampaignDetailsPage() {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
   const [creatorName, setCreatorName] = useState("");
+  const [showDonateModal, setShowDonateModal] = useState(false);
+  const [donationValue, setDonationValue] = useState("");
 
   useEffect(() => {
     const fetchCampaign = async () => {
@@ -90,6 +93,32 @@ export default function CampaignDetailsPage() {
     }
   };
 
+  const handleDonateValue = async (e) => {
+    e?.preventDefault?.();
+    const amount = parseFloat(String(donationValue).replace(",", "."));
+    if (isNaN(amount) || amount <= 0) {
+      alert("Informe um valor válido maior que 0.");
+      return;
+    }
+    try {
+      const res = await donateCampaignAmount(campaign.id, amount.toFixed(2));
+      setCampaign(res.data);
+      setDonationValue("");
+      setShowDonateModal(false);
+      alert("Obrigado pela sua doação!");
+    } catch (err) {
+      console.error("Erro ao doar com valor:", err);
+      alert(
+        err?.response?.data?.message ||
+          "Não foi possível realizar a doação. Tente novamente."
+      );
+    }
+  };
+
+  const amountRaised = Number(campaign.amountRaised || 0);
+  const goal = Number(campaign.goal || 0);
+  const progress = goal > 0 ? Math.min(100, (amountRaised / goal) * 100) : 0;
+
   return (
     <div className="max-w-3xl mx-auto mt-10 rounded-lg p-6">
       <button
@@ -114,9 +143,29 @@ export default function CampaignDetailsPage() {
 
       <p className="border-black text-gray-700 mb-4">{campaign.description}</p>
 
+      {/* Barra de progresso de doações */}
+      <div className="mb-4">
+        <div className="flex justify-between text-sm text-gray-600 mb-1">
+          <span>Arrecadado: R$ {amountRaised.toFixed(2)}</span>
+          <span>Meta: R$ {goal.toFixed(2)}</span>
+        </div>
+        <div className="w-full bg-gray-200 rounded-full h-3">
+          <div
+            className="bg-green-600 h-3 rounded-full"
+            style={{ width: `${progress}%` }}
+            title={`${progress.toFixed(0)}%`}
+          />
+        </div>
+        {amountRaised > goal && (
+          <p className="text-green-700 text-sm mt-1">
+            Ultrapassou a meta em R$ {(amountRaised - goal).toFixed(2)} 🎉
+          </p>
+        )}
+      </div>
+
       <div className="grid grid-cols-2 gap-4 text-gray-600 mb-6">
         <p>
-          <strong>Meta:</strong> R$ {campaign.goal?.toFixed(2)}
+          <strong>Meta:</strong> R$ {goal.toFixed(2)}
         </p>
         <p>
           <strong>Doações:</strong> {campaign.donationsCount ?? 0}
@@ -135,14 +184,23 @@ export default function CampaignDetailsPage() {
       </div>
 
       <div className="flex gap-3">
-        {/* Voltar já acima */}
+        {/* Botões de ação */}
         {campaign.userId !== user?.id && (
-          <button
-            onClick={handleDonate}
-            className="inline-flex items-center gap-2 px-4 py-2 bg-green-600 text-white rounded hover:bg-green-700 transition"
-          >
-            <HandHeart size={18} /> Doar
-          </button>
+          <>
+            <button
+              onClick={() => setShowDonateModal(true)}
+              className="inline-flex items-center gap-2 px-4 py-2 bg-green-600 text-white rounded hover:bg-green-700 transition"
+            >
+              <HandHeart size={18} /> Doar um valor
+            </button>
+            <button
+              onClick={handleDonate}
+              className="inline-flex items-center gap-2 px-4 py-2 bg-emerald-600 text-white rounded hover:bg-emerald-700 transition"
+              title="Doação rápida (incrementa contador)"
+            >
+              Doar rápido
+            </button>
+          </>
         )}
         {campaign.userId === user?.id && (
           <>
@@ -161,6 +219,49 @@ export default function CampaignDetailsPage() {
           </>
         )}
       </div>
+
+      {/* Modal simples de doação com valor */}
+      {showDonateModal && (
+        <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 p-4">
+          <div className="bg-white rounded-xl shadow-2xl w-full max-w-sm p-6">
+            <h3 className="text-xl font-semibold text-gray-800 mb-2">
+              Doar para: {campaign.title}
+            </h3>
+            <p className="text-sm text-gray-600 mb-4">
+              Informe o valor que deseja doar. A campanha pode receber acima da
+              meta.
+            </p>
+            <form onSubmit={handleDonateValue}>
+              <input
+                type="number"
+                step="0.01"
+                min="0.01"
+                placeholder="Valor (R$)"
+                className="border text-black p-2 mb-3 w-full rounded"
+                value={donationValue}
+                onChange={(e) => setDonationValue(e.target.value)}
+                autoFocus
+                required
+              />
+              <div className="flex gap-2 justify-end">
+                <button
+                  type="button"
+                  className="px-4 py-2 bg-gray-200 text-gray-800 rounded hover:bg-gray-300"
+                  onClick={() => setShowDonateModal(false)}
+                >
+                  Cancelar
+                </button>
+                <button
+                  type="submit"
+                  className="px-4 py-2 bg-green-600 text-white rounded hover:bg-green-700"
+                >
+                  Doar
+                </button>
+              </div>
+            </form>
+          </div>
+        </div>
+      )}
     </div>
   );
 }

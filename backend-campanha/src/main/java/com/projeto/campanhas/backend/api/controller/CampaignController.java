@@ -14,7 +14,9 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
+import java.math.BigDecimal;
 import java.util.List;
+import java.util.Map;
 import java.util.stream.Collectors;
 
 @RestController
@@ -27,8 +29,9 @@ public class CampaignController {
 
     private static CampaignResponse toResponse(Campaign c) {
         return new CampaignResponse(
-                c.getId(), c.getGoal(), c.getDeadline(), c.getTitle(), c.getDescription(), 
-                c.getPreview(), c.getCategory(), c.getCity(), c.getState(), c.getImageUrl(), c.getUserId(), c.getDonationsCount()
+                c.getId(), c.getGoal(), c.getDeadline(), c.getTitle(), c.getDescription(),
+                c.getPreview(), c.getCategory(), c.getCity(), c.getState(), c.getImageUrl(), c.getUserId(),
+                c.getDonationsCount(), c.getAmountRaised()
         );
     }
 
@@ -92,5 +95,15 @@ public class CampaignController {
     public ResponseEntity<CampaignResponse> donate(@PathVariable String id) {
         Campaign c = campaignService.donate(id);
         return ResponseEntity.ok(toResponse(c));
+    }
+
+    @Operation(summary = "Doar um valor específico para a campanha")
+    @SecurityRequirement(name = "bearerAuth")
+    @PreAuthorize("isAuthenticated()")
+    @PostMapping("/{id}/donations")
+    public ResponseEntity<CampaignResponse> donateAmount(@PathVariable String id, @Valid @RequestBody DonationRequest request) {
+    public ResponseEntity<CampaignResponse> donateAmount(@PathVariable String id, @RequestBody Map<String, BigDecimal> body) {
+        BigDecimal amount = body.get("amount");
+        Campaign c = campaignService.donateAmount(id, amount);
     }
 }

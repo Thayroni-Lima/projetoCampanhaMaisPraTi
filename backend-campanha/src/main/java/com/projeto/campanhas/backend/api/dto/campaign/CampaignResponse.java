@@ -21,4 +21,5 @@ public class CampaignResponse {
     private String imageUrl;
     private String userId;
     private Integer donationsCount;
+    private BigDecimal amountRaised; // novo campo
 }

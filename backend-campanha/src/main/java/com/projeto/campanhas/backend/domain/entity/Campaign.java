@@ -64,12 +64,17 @@ public class Campaign {
     @Column(name = "donations_count", nullable = false)
     private Integer donationsCount;
 
+    // Soma total das doações em dinheiro
+    @Column(name = "amount_raised", nullable = true, precision = 12, scale = 2)
+    private BigDecimal amountRaised;
+
     @PrePersist
     public void prePersist() {
         if (this.id == null) this.id = UUID.randomUUID().toString();
         if (this.createdAt == null) this.createdAt = Instant.now();
         if (this.updatedAt == null) this.updatedAt = Instant.now();
         if (this.donationsCount == null) this.donationsCount = 0;
+        if (this.amountRaised == null) this.amountRaised = BigDecimal.ZERO;
     }
 
     @PreUpdate
