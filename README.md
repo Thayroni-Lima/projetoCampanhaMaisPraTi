@@ -27,7 +27,7 @@ Sistema de centralização de Campanhas Solidárias desenvolvido para o programa
 ## 🚀 Subindo com Docker (Recomendado)
 
 ```bash
-git clone <url-do-repositorio>
+git clone <https://github.com/Thayroni-Lima/projetoCampanhaMaisPraTi.git>
 cd projetoCampanhaMaisPraTi
 docker compose up --build
 ```
