@@ -6,7 +6,6 @@ import { useAuth } from "../../../contexts/AuthContext";
 import { api } from "../../../services/authService";
 import {
   deleteCampaign,
-  donateCampaign,
   donateCampaignAmount,
   getCampaignById,
 } from "../../../services/campaignService";
@@ -61,24 +60,7 @@ export default function CampaignDetailsPage() {
   const handleEdit = () => {
     navigate(`/campanhas/editar/${campaign.id}`);
   };
-
-  const handleDonate = async () => {
-    try {
-      await donateCampaign(campaign.id);
-      // Atualiza localmente o contador de doações
-      setCampaign((prev) => ({
-        ...prev,
-        donationsCount: (prev?.donationsCount || 0) + 1,
-      }));
-      alert("Obrigado pela sua doação!");
-    } catch (err) {
-      console.error("Erro ao doar:", err);
-      alert(
-        err?.response?.data?.message ||
-          "Não foi possível realizar a doação. Tente novamente."
-      );
-    }
-  };
+  // Removido fluxo de "doação rápida" para manter apenas doação com valor específico
 
   const handleDelete = async () => {
     if (!window.confirm("Tem certeza que deseja excluir esta campanha?"))
@@ -186,21 +168,12 @@ export default function CampaignDetailsPage() {
       <div className="flex gap-3">
         {/* Botões de ação */}
         {campaign.userId !== user?.id && (
-          <>
-            <button
-              onClick={() => setShowDonateModal(true)}
-              className="inline-flex items-center gap-2 px-4 py-2 bg-green-600 text-white rounded hover:bg-green-700 transition"
-            >
-              <HandHeart size={18} /> Doar um valor
-            </button>
-            <button
-              onClick={handleDonate}
-              className="inline-flex items-center gap-2 px-4 py-2 bg-emerald-600 text-white rounded hover:bg-emerald-700 transition"
-              title="Doação rápida (incrementa contador)"
-            >
-              Doar rápido
-            </button>
-          </>
+          <button
+            onClick={() => setShowDonateModal(true)}
+            className="inline-flex items-center gap-2 px-4 py-2 bg-green-600 text-white rounded hover:bg-green-700 transition"
+          >
+            <HandHeart size={18} /> Doar um valor
+          </button>
         )}
         {campaign.userId === user?.id && (
           <>

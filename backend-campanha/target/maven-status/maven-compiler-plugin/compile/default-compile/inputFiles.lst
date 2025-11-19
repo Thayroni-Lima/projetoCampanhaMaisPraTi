@@ -12,6 +12,7 @@
 /home/poloadmin/projetoCampanhaMaisPraTi/backend-campanha/src/main/java/com/projeto/campanhas/backend/api/dto/campaign/CampaignCreateRequest.java
 /home/poloadmin/projetoCampanhaMaisPraTi/backend-campanha/src/main/java/com/projeto/campanhas/backend/api/dto/campaign/CampaignResponse.java
 /home/poloadmin/projetoCampanhaMaisPraTi/backend-campanha/src/main/java/com/projeto/campanhas/backend/api/dto/campaign/CampaignUpdateRequest.java
+/home/poloadmin/projetoCampanhaMaisPraTi/backend-campanha/src/main/java/com/projeto/campanhas/backend/api/dto/campaign/DonationRequest.java
 /home/poloadmin/projetoCampanhaMaisPraTi/backend-campanha/src/main/java/com/projeto/campanhas/backend/api/dto/user/UserResponse.java
 /home/poloadmin/projetoCampanhaMaisPraTi/backend-campanha/src/main/java/com/projeto/campanhas/backend/api/dto/user/UserUpdateRequest.java
 /home/poloadmin/projetoCampanhaMaisPraTi/backend-campanha/src/main/java/com/projeto/campanhas/backend/api/exception/GlobalExceptionHandler.java

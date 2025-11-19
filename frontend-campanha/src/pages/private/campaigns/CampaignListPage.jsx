@@ -3,7 +3,6 @@ import { useNavigate } from "react-router-dom";
 import { useAuth } from "../../../contexts/AuthContext";
 import { api } from "../../../services/authService";
 import {
-  donateCampaign,
   getAllCampaigns,
 } from "../../../services/campaignService";
 
@@ -51,17 +50,7 @@ export default function CampaignList() {
     }
   }
 
-  const handleDonate = async (e, id) => {
-    e.stopPropagation();
-    try {
-      await donateCampaign(id);
-      alert("Obrigado pela sua doação!");
-      // Opcional: atualizar contadores no card se exibirmos
-    } catch (err) {
-      console.error("Erro ao doar:", err);
-      alert("Não foi possível realizar a doação. Tente novamente.");
-    }
-  };
+  // Removido fluxo de "doação rápida" para exigir valor específico na tela de detalhes
 
   return (
     <div className="p-6">
@@ -151,17 +140,6 @@ export default function CampaignList() {
                     className="flex-1 bg-green-600 text-white px-3 py-2 rounded-md hover:bg-green-700 transition"
                   >
                     Detalhes
-                  </button>
-                  <button
-                    onClick={(e) => handleDonate(e, c.id)}
-                    disabled={c.userId === user?.id}
-                    className={`flex-1 px-3 py-2 rounded-md transition ${
-                      c.userId === user?.id
-                        ? "bg-gray-300 text-gray-600 cursor-not-allowed"
-                        : "bg-blue-600 text-white hover:bg-blue-700"
-                    }`}
-                  >
-                    Doar
                   </button>
                 </div>
               </div>
