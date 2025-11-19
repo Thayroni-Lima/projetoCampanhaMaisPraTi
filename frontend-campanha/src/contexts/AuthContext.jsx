@@ -1,5 +1,17 @@
-import { createContext, useContext, useState, useEffect } from "react";
-import { login as loginService, saveToken, removeToken, getToken } from "../services/authService";
+import {
+  createContext,
+  useCallback,
+  useContext,
+  useEffect,
+  useState,
+} from "react";
+import {
+  api,
+  getToken,
+  login as loginService,
+  removeToken,
+  saveToken,
+} from "../services/authService";
 
 const AuthContext = createContext();
 
@@ -23,15 +35,26 @@ export function AuthProvider({ children }) {
   const [token, setToken] = useState(getToken());
   const [loading, setLoading] = useState(true); // <- começa carregando
 
+  // Busca dados do usuário quando há token
+  const fetchUser = useCallback(async () => {
+    try {
+      const response = await api.get("/users/me");
+      setUser(response.data);
+    } catch (error) {
+      console.error("Erro ao buscar usuário:", error);
+      setUser(null);
+    }
+  }, []);
+
   // Checa se há token salvo no início
   useEffect(() => {
     const storedToken = getToken();
     if (storedToken) {
       setToken(storedToken);
-      // Aqui você pode futuramente validar o token com a API (opcional)
+      fetchUser();
     }
     setLoading(false);
-  }, []);
+  }, [fetchUser]);
 
   async function login(credentials) {
     setLoading(true);
@@ -39,7 +62,8 @@ export function AuthProvider({ children }) {
       const data = await loginService(credentials); // chama authService.js
       saveToken(data.token);
       setToken(data.token);
-      setUser(data.user || { email: credentials.email });
+      // Busca dados completos do usuário após login
+      await fetchUser();
     } finally {
       setLoading(false);
     }
@@ -59,6 +83,7 @@ export function AuthProvider({ children }) {
     isAuthenticated: !!token,
     login,
     logout,
+    fetchUser,
   };
 
   return (

@@ -1,5 +1,13 @@
 package com.projeto.campanhas.backend.api.controller;
 
+import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.RestController;
+
 import com.projeto.campanhas.backend.api.dto.auth.AuthResponse;
 import com.projeto.campanhas.backend.api.dto.auth.LoginRequest;
 import com.projeto.campanhas.backend.api.dto.auth.RegisterRequest;
@@ -15,8 +23,6 @@ import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
-import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.*;
 
 @RestController
 @RequestMapping("/auth")
@@ -64,13 +70,15 @@ public class AuthController {
     @GetMapping("/reset-password")
     public MessageResponse validateToken(@RequestParam String token) {
         boolean valid = passwordResetService.validateToken(token);
-        if (!valid) throw new RuntimeException("Token inválido ou expirado.");
+        if (!valid) {
+            throw new RuntimeException("Token inválido ou expirado.");
+        }
         return new MessageResponse("Token válido.");
     }
 
     @Operation(summary = "Redefinir senha")
     @PostMapping("/reset-password")
-    public MessageResponse resetPassword(@RequestBody ResetPasswordRequest req) {
+    public MessageResponse resetPassword(@Valid @RequestBody ResetPasswordRequest req) {
         passwordResetService.resetPassword(req.getToken(), req.getNewPassword());
         return new MessageResponse("Senha redefinida com sucesso!");
     }

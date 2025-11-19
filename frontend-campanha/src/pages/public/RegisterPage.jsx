@@ -12,7 +12,7 @@ export default function RegisterPage() {
     avatarUrl: "",
     city: "",
     state: "",
-    userTypeLabel: "",
+    userTypeLabel: "NORMAL",
   });
 
   const [error, setError] = useState("");
@@ -101,14 +101,6 @@ export default function RegisterPage() {
             onChange={handleChange}
             maxLength={2}
             className="border text-black p-2 mb-3 w-full rounded uppercase"
-          />
-          <input
-            type="text"
-            name="userTypeLabel"
-            placeholder="Tipo de usuário (NORMAL ou ADMIN)"
-            value={formData.userTypeLabel}
-            onChange={handleChange}
-            className="border text-black p-2 mb-3 w-full rounded"
           />
         </div>
 

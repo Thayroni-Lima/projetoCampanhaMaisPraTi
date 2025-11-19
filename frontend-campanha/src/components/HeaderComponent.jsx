@@ -22,12 +22,12 @@ export default function HeaderComponent() {
         </button>
 
         {/* Nome do Projeto */}
-        <button
-          className="p-2 hover:bg-indigo-600 rounded-lg"
+        <p
+          className="p-2 hover:cursor-pointer rounded-lg"
           onClick={() => navigate('/homepage')}
         >
           <h2 className="text-lg font-bold tracking-wide">Projeto Campanha</h2>
-        </button>
+        </p>
 
         {/* Ícone de Perfil */}
         <button 
