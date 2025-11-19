@@ -3,7 +3,7 @@ import { useEffect, useState } from "react";
 import { useNavigate, useParams } from "react-router-dom";
 import { useAuth } from "../../../contexts/AuthContext";
 import { api } from "../../../services/authService";
-import { getCampaignById } from "../../../services/campaignService";
+import { deleteCampaign, getCampaignById } from "../../../services/campaignService";
 
 export default function CampaignDetailsPage() {
   const { id } = useParams();
@@ -13,6 +13,7 @@ export default function CampaignDetailsPage() {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
   const [creatorName, setCreatorName] = useState("");
+  const [donations, setDonations] = useState(0);
 
   useEffect(() => {
     const fetchCampaign = async () => {
@@ -45,6 +46,38 @@ export default function CampaignDetailsPage() {
     fetchCampaign();
   }, [id]);
 
+  useEffect(() => {
+    // carrega contagem de doações do localStorage
+    try {
+      const raw = localStorage.getItem(`donations_${id}`);
+      if (raw) setDonations(parseInt(raw, 10) || 0);
+    } catch (e) {
+      // ignore
+    }
+  }, [id]);
+
+  function handleDonate() {
+    const next = donations + 1;
+    setDonations(next);
+    try {
+      localStorage.setItem(`donations_${id}`, String(next));
+    } catch (e) {
+      // ignore storage errors
+    }
+  }
+
+  async function handleDelete() {
+    if (!window.confirm("Tem certeza que deseja excluir esta campanha?")) return;
+    try {
+      await deleteCampaign(id);
+      alert("Campanha excluída com sucesso!");
+      navigate("/dashboard");
+    } catch (e) {
+      console.error(e);
+      alert("Erro ao excluir campanha.");
+    }
+  }
+
   if (loading) return <p className="text-center mt-10">Carregando...</p>;
   if (error) return <p className="text-center text-red-600 mt-10">{error}</p>;
   if (!campaign)
@@ -76,8 +109,7 @@ export default function CampaignDetailsPage() {
           <strong>Meta:</strong> R$ {campaign.goal?.toFixed(2)}
         </p>
         <p>
-          <strong>Arrecadado:</strong> R${" "}
-          {campaign.active ? campaign.collectedAmount?.toFixed(2) : "0.00"}
+          <strong>Doações (simples):</strong> {donations}
         </p>
         <p>
           <strong>Prazo:</strong>{" "}
@@ -92,14 +124,33 @@ export default function CampaignDetailsPage() {
         </p>
       </div>
 
-      <div className="flex gap-4">
-        {campaign.userId === user?.id && (
+      <div className="flex gap-3 mt-4">
+        {/* Botão doar: habilitado apenas se campanha não for do usuário */}
+        {campaign.userId !== user?.id && (
           <button
-            onClick={handleEdit}
-            className="px-4 py-2 bg-blue-500 text-white rounded hover:bg-blue-600 transition"
+            onClick={handleDonate}
+            className="px-4 py-2 bg-green-600 text-white rounded hover:bg-green-700 transition"
           >
-            Editar
+            Doar
           </button>
+        )}
+
+        {/* Botões para campanhas próprias */}
+        {campaign.userId === user?.id && (
+          <>
+            <button
+              onClick={handleEdit}
+              className="px-4 py-2 bg-blue-600 text-white rounded hover:bg-blue-700 transition"
+            >
+              Editar
+            </button>
+            <button
+              onClick={handleDelete}
+              className="px-4 py-2 bg-red-600 text-white rounded hover:bg-red-700 transition"
+            >
+              Excluir
+            </button>
+          </>
         )}
       </div>
     </div>

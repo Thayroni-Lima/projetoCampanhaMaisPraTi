@@ -1,11 +1,14 @@
-import { useEffect, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import { useNavigate } from "react-router-dom";
+import { useAuth } from "../../../contexts/AuthContext";
 import { api } from "../../../services/authService";
 import { getAllCampaigns } from "../../../services/campaignService";
 
 export default function CampaignList() {
   const [campaigns, setCampaigns] = useState([]);
   const [usersMap, setUsersMap] = useState({});
+  const [filters, setFilters] = useState({ name: "", category: "" });
+  const { user } = useAuth();
   const navigate = useNavigate();
 
   useEffect(() => {
@@ -35,6 +38,20 @@ export default function CampaignList() {
     }
   }
 
+  const filteredCampaigns = useMemo(() => {
+    const notOwn = campaigns.filter((c) => c.userId !== user?.id);
+    return notOwn.filter((c) => {
+      const nameOk = !filters.name || c.title?.toLowerCase().includes(filters.name.toLowerCase());
+      const catOk = !filters.category || c.category?.toLowerCase().includes(filters.category.toLowerCase());
+      return nameOk && catOk;
+    });
+  }, [campaigns, filters, user?.id]);
+
+  function handleFilterChange(e) {
+    const { name, value } = e.target;
+    setFilters((prev) => ({ ...prev, [name]: value }));
+  }
+
   return (
     <div className="p-6">
       <div className="flex justify-between items-center mb-6">
@@ -49,11 +66,43 @@ export default function CampaignList() {
         </button>
       </div>
 
-      {campaigns.length === 0 ? (
+      {/* Filtros */}
+      <div className="bg-white rounded-lg shadow-md p-4 mb-6">
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+          <div>
+            <label className="block text-sm font-medium text-gray-700 mb-1">
+              Nome da Campanha
+            </label>
+            <input
+              name="name"
+              type="text"
+              placeholder="Buscar por nome..."
+              value={filters.name}
+              onChange={handleFilterChange}
+              className="w-full px-3 py-2 border rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent ring-2 ring-black text-black"
+            />
+          </div>
+          <div>
+            <label className="block text-sm font-medium text-gray-700 mb-1">
+              Categoria
+            </label>
+            <input
+              name="category"
+              type="text"
+              placeholder="Ex: Saúde, Educação..."
+              value={filters.category}
+              onChange={handleFilterChange}
+              className="w-full px-3 py-2 border rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent ring-2 ring-black text-black"
+            />
+          </div>
+        </div>
+      </div>
+
+      {filteredCampaigns.length === 0 ? (
         <p className="text-gray-500">Nenhuma campanha encontrada.</p>
       ) : (
-        <div className="w-fit grid grid-cols-1 md:grid-cols-7 gap-6">
-          {campaigns.map((c) => (
+        <div className="w-fit grid grid-cols-1 md:grid-cols-4 lg:grid-cols-6 gap-6">
+          {filteredCampaigns.map((c) => (
             <div
               key={c.id}
               className="bg-white rounded-xl shadow-md overflow-hidden hover:shadow-lg transition cursor-pointer"
@@ -91,6 +140,27 @@ export default function CampaignList() {
                     <strong>Criador:</strong>{" "}
                     {usersMap[c.userId] || "Carregando..."}
                   </p>
+                </div>
+
+                <div className="mt-4 flex gap-2">
+                  <button
+                    onClick={(e) => {
+                      e.stopPropagation();
+                      navigate(`/campanhas/${c.id}`);
+                    }}
+                    className="flex-1 bg-green-600 text-white px-3 py-2 rounded-md hover:bg-green-700"
+                  >
+                    Detalhes
+                  </button>
+                  <button
+                    onClick={(e) => {
+                      e.stopPropagation();
+                      navigate(`/campanhas/${c.id}`);
+                    }}
+                    className="flex-1 bg-blue-600 text-white px-3 py-2 rounded-md hover:bg-blue-700"
+                  >
+                    Doar
+                  </button>
                 </div>
               </div>
             </div>
